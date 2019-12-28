@@ -1,0 +1,71 @@
+// Copyright (c) 2019, NewReleases CLI AUTHORS.
+// All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+package cmd
+
+import (
+	"os"
+	"strings"
+	"syscall"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"golang.org/x/crypto/ssh/terminal"
+)
+
+const optionNameAuthKey = "auth-key"
+
+var exit = func(code int) { os.Exit(code) }
+
+var cmdPasswordReader passwordReader = new(stdInPasswordReader)
+
+type passwordReader interface {
+	ReadPassword() (password string, err error)
+}
+
+type stdInPasswordReader struct{}
+
+func (stdInPasswordReader) ReadPassword() (password string, err error) {
+	v, err := terminal.ReadPassword(syscall.Stdin)
+	if err != nil {
+		return "", err
+	}
+	return string(v), err
+}
+
+func writeConfig(cmd *cobra.Command, authKey string) (err error) {
+	viper.Set(optionNameAuthKey, strings.TrimSpace(authKey))
+	err = viper.WriteConfig()
+	if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+		err = viper.SafeWriteConfigAs(cfgFile)
+	}
+	return err
+}
+
+func terminalPrompt(cmd *cobra.Command, reader interface{ ReadString(byte) (string, error) }, title string) (value string, err error) {
+	cmd.Print(title + ": ")
+	value, err = reader.ReadString('\n')
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(value), nil
+}
+
+func terminalPromptPassword(cmd *cobra.Command, title string) (password string, err error) {
+	cmd.Print(title + ": ")
+	password, err = cmdPasswordReader.ReadPassword()
+	cmd.Println()
+	if err != nil {
+		return "", err
+	}
+	return password, nil
+}
+
+func handleError(cmd *cobra.Command, err error) {
+	if err != nil {
+		cmd.PrintErr("Error: ", err.Error(), "\n")
+	}
+	exit(1)
+}
