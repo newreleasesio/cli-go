@@ -8,7 +8,6 @@ package cmd
 import (
 	"os"
 	"strings"
-	"syscall"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -28,7 +27,7 @@ type passwordReader interface {
 type stdInPasswordReader struct{}
 
 func (stdInPasswordReader) ReadPassword() (password string, err error) {
-	v, err := terminal.ReadPassword(syscall.Stdin)
+	v, err := terminal.ReadPassword(int(os.Stdin.Fd()))
 	if err != nil {
 		return "", err
 	}
