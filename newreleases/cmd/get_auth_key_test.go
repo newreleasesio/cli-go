@@ -55,7 +55,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 			wantOutputFunc: func(filename string) string {
 				return fmt.Sprintf("Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \nUsing auth key: Master.\nConfiguration saved to: %s.\n", filename)
 			},
-			wantData: "api-endpoint: \"\"\nauth-key: z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71\ntimeout: 30s\n",
+			wantData: "auth-key: z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71\ntimeout: 30s\n",
 		},
 		{
 			name:           "single key with config flag",
@@ -65,7 +65,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 			wantOutputFunc: func(filename string) string {
 				return fmt.Sprintf("Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \nUsing auth key: Master.\nConfiguration saved to: %s.\n", filename)
 			},
-			wantData: "api-endpoint: \"\"\nauth-key: z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71\ntimeout: 30s\n",
+			wantData: "auth-key: z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71\ntimeout: 30s\n",
 		},
 		{
 			name:  "multiple keys select first",
@@ -77,7 +77,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 			wantOutputFunc: func(filename string) string {
 				return fmt.Sprintf("Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \n\n    |   NAME    | AUTHORIZED NETWORKS  \n----+-----------+----------------------\n  1 | Master    |                      \n  2 | Secondary |                      \n\nSelect auth key (enter row number): Using auth key: Master.\nConfiguration saved to: %s.\n", filename)
 			},
-			wantData: "api-endpoint: \"\"\nauth-key: z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71\ntimeout: 30s\n",
+			wantData: "auth-key: z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71\ntimeout: 30s\n",
 		},
 		{
 			name:  "multiple keys select second",
@@ -89,7 +89,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 			wantOutputFunc: func(filename string) string {
 				return fmt.Sprintf("Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \n\n    |   NAME    | AUTHORIZED NETWORKS  \n----+-----------+----------------------\n  1 | Master    |                      \n  2 | Secondary |                      \n\nSelect auth key (enter row number): Using auth key: Secondary.\nConfiguration saved to: %s.\n", filename)
 			},
-			wantData: "api-endpoint: \"\"\nauth-key: ne0sg5a9b4qOpc9ty6az8jwn5n16rpymcw71\ntimeout: 30s\n",
+			wantData: "auth-key: ne0sg5a9b4qOpc9ty6az8jwn5n16rpymcw71\ntimeout: 30s\n",
 		},
 		{
 			name:           "multiple keys select second with config flag",
@@ -102,7 +102,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 			wantOutputFunc: func(filename string) string {
 				return fmt.Sprintf("Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \n\n    |   NAME    | AUTHORIZED NETWORKS  \n----+-----------+----------------------\n  1 | Master    |                      \n  2 | Secondary |                      \n\nSelect auth key (enter row number): Using auth key: Secondary.\nConfiguration saved to: %s.\n", filename)
 			},
-			wantData: "api-endpoint: \"\"\nauth-key: ne0sg5a9b4qOpc9ty6az8jwn5n16rpymcw71\ntimeout: 30s\n",
+			wantData: "auth-key: ne0sg5a9b4qOpc9ty6az8jwn5n16rpymcw71\ntimeout: 30s\n",
 		},
 		{
 			name:  "multiple keys select none",
@@ -127,7 +127,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 				return fmt.Sprintf("Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \n\n    |   NAME    | AUTHORIZED NETWORKS  \n----+-----------+----------------------\n  1 | Master    |                      \n  2 | Secondary |                      \n\nSelect auth key (enter row number): Select auth key (enter row number): Using auth key: Master.\nConfiguration saved to: %s.\n", filename)
 			},
 			wantErrorOutput: "Invalid row number.\n",
-			wantData:        "api-endpoint: \"\"\nauth-key: z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71\ntimeout: 30s\n",
+			wantData:        "auth-key: z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71\ntimeout: 30s\n",
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {

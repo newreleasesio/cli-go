@@ -88,7 +88,6 @@ func addClientFlags(cmd *cobra.Command) {
 	cobra.OnInitialize(func() {
 		must(viper.BindPFlag(optionNameAuthKey, flags.Lookup(optionNameAuthKey)))
 		must(viper.BindPFlag(optionNameTimeout, flags.Lookup(optionNameTimeout)))
-		must(viper.BindPFlag(optionNameAPIEndpoint, flags.Lookup(optionNameAPIEndpoint)))
 	})
 }
 
