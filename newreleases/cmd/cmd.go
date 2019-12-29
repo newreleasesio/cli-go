@@ -6,17 +6,25 @@
 package cmd
 
 import (
+	"context"
+	"errors"
+	"fmt"
+	"net/url"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh/terminal"
+	"newreleases.io/newreleases"
 )
 
-const optionNameAuthKey = "auth-key"
-
-var exit = func(code int) { os.Exit(code) }
+const (
+	optionNameAuthKey     = "auth-key"
+	optionNameTimeout     = "timeout"
+	optionNameAPIEndpoint = "api-endpoint"
+)
 
 var cmdPasswordReader passwordReader = new(stdInPasswordReader)
 
@@ -32,15 +40,6 @@ func (stdInPasswordReader) ReadPassword() (password string, err error) {
 		return "", err
 	}
 	return string(v), err
-}
-
-func writeConfig(cmd *cobra.Command, authKey string) (err error) {
-	viper.Set(optionNameAuthKey, strings.TrimSpace(authKey))
-	err = viper.WriteConfig()
-	if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-		err = viper.SafeWriteConfigAs(cfgFile)
-	}
-	return err
 }
 
 func terminalPrompt(cmd *cobra.Command, reader interface{ ReadString(byte) (string, error) }, title string) (value string, err error) {
@@ -62,9 +61,59 @@ func terminalPromptPassword(cmd *cobra.Command, title string) (password string, 
 	return password, nil
 }
 
-func handleError(cmd *cobra.Command, err error) {
-	if err != nil {
-		cmd.PrintErr("Error: ", err.Error(), "\n")
+func writeConfig(cmd *cobra.Command, authKey string) (err error) {
+	viper.Set(optionNameAuthKey, strings.TrimSpace(authKey))
+	err = viper.WriteConfig()
+	if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+		err = viper.SafeWriteConfigAs(cfgFile)
 	}
-	exit(1)
+	return err
+}
+
+func newClient() (client *newreleases.Client, err error) {
+	authKey := viper.GetString(optionNameAuthKey)
+	if authKey == "" {
+		return nil, errors.New("auth key not configured")
+	}
+	return newreleases.NewClient(authKey, newClientOptions()), nil
+}
+
+func addClientFlags(cmd *cobra.Command) {
+	flags := cmd.Flags()
+	flags.String(optionNameAuthKey, "", "API auth key")
+	flags.Duration(optionNameTimeout, 30*time.Second, "API request timeout")
+	flags.String(optionNameAPIEndpoint, "", "API Endpoint")
+	must(flags.MarkHidden(optionNameAPIEndpoint))
+
+	cobra.OnInitialize(func() {
+		must(viper.BindPFlag(optionNameAuthKey, flags.Lookup(optionNameAuthKey)))
+		must(viper.BindPFlag(optionNameTimeout, flags.Lookup(optionNameTimeout)))
+		must(viper.BindPFlag(optionNameAPIEndpoint, flags.Lookup(optionNameAPIEndpoint)))
+	})
+}
+
+func newClientOptions() (o *newreleases.ClientOptions) {
+	return &newreleases.ClientOptions{
+		BaseURL: mustURLParse(viper.GetString(optionNameAPIEndpoint)),
+	}
+}
+
+func newClientContext() (ctx context.Context, cancel context.CancelFunc) {
+	return context.WithTimeout(context.Background(), viper.GetDuration(optionNameTimeout))
+}
+
+func must(err error) {
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Error:", err)
+		os.Exit(1)
+	}
+}
+
+func mustURLParse(s string) (u *url.URL) {
+	if s == "" {
+		return nil
+	}
+	u, err := url.Parse(s)
+	must(err)
+	return u
 }

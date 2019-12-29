@@ -43,7 +43,7 @@ func TestConfigureCmd(t *testing.T) {
 			wantOutputFunc: func(filename string) string {
 				return fmt.Sprintf("Auth Key: Configuration saved to: %s.\n", filename)
 			},
-			wantData: "auth-key: z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71\n",
+			wantData: "api-endpoint: \"\"\nauth-key: z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71\ntimeout: 30s\n",
 		},
 		{
 			name:           "valid key with config flag",
@@ -52,7 +52,7 @@ func TestConfigureCmd(t *testing.T) {
 			wantOutputFunc: func(filename string) string {
 				return fmt.Sprintf("Auth Key: Configuration saved to: %s.\n", filename)
 			},
-			wantData: "auth-key: 9ty6an1z8jwn5ne0sg5a9b4qOpc6rpymcw71\n",
+			wantData: "api-endpoint: \"\"\nauth-key: 9ty6an1z8jwn5ne0sg5a9b4qOpc6rpymcw71\ntimeout: 30s\n",
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -158,7 +158,7 @@ func TestConfigureCmd_overwrite(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		wantData := fmt.Sprintf("auth-key: %s\n", authKey)
+		wantData := fmt.Sprintf("api-endpoint: \"\"\nauth-key: %s\ntimeout: 30s\n", authKey)
 		if string(gotData) != wantData {
 			t.Errorf("got config file data %q, want %q", string(gotData), wantData)
 		}

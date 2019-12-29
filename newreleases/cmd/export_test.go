@@ -8,4 +8,5 @@ package cmd
 type (
 	PasswordReader = passwordReader
 	AuthKeysGetter = authKeysGetter
+	AuthService    = authService
 )

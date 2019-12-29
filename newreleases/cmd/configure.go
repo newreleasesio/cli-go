@@ -15,27 +15,25 @@ func init() {
 	rootCmd.AddCommand(&cobra.Command{
 		Use:   "configure",
 		Short: "Provide configuration values to be stored in a file",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			reader := bufio.NewReader(cmd.InOrStdin())
 
 			authKey, err := terminalPrompt(cmd, reader, "Auth Key")
 			if err != nil {
-				handleError(cmd, err)
-				return
+				return err
 			}
 			if authKey == "" {
 				cmd.PrintErr("No key provided.\n")
 				cmd.Println("Configuration is not saved.")
-				exit(1)
-				return
+				return nil
 			}
 
 			if err := writeConfig(cmd, authKey); err != nil {
-				handleError(cmd, err)
-				return
+				return err
 			}
 
 			cmd.Printf("Configuration saved to: %s.\n", cfgFile)
+			return nil
 		},
 	})
 }

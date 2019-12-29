@@ -2,9 +2,7 @@
 
 NewReleases is a command line interface for managing [NewReleases](https://newreleases.io) projects implemented using the Go programming language.
 
-<aside class="warning">
-This project not complete.
-</aside>
+> This project is not complete.
 
 ## Installation
 

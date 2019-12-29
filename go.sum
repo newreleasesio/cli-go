@@ -162,3 +162,5 @@ gopkg.in/yaml.v2 v2.2.4/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 newreleases.io/newreleases v1.3.0 h1:uw2oPS3GKRRVh+XCxGsTwmNAHQrkBeydPCyClPV+NKE=
 newreleases.io/newreleases v1.3.0/go.mod h1:u0OfU5rsDuBttycb8CwIlfKqoBfNcPNjQTuz1axVpIA=
+newreleases.io/newreleases v1.3.1 h1:QPTy+0xfmCWTj/xePn3rc+J8GEEhO4N77buGkp8zT28=
+newreleases.io/newreleases v1.3.1/go.mod h1:IFoaLRTd4ZNVIEIZflkjRt+0Z4BOgivteiLGs9vPobw=

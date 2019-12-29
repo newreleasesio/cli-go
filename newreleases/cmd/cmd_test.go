@@ -21,13 +21,10 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
-		return
 	}
 	defer os.RemoveAll(dir)
 
 	testHomeDir = dir
-
-	exit = func(int) {}
 
 	os.Exit(m.Run())
 }
@@ -49,8 +46,8 @@ func ExecuteT(t *testing.T, opts ...Option) {
 	}
 	defer newResetCfgFileFunc()()
 
-	if err := Execute(); err != nil {
-		t.Fatalf("command execute: %v", err)
+	if err := Execute(); err != o.wantError {
+		t.Fatalf("got error %v, want %v", err, o.wantError)
 	}
 	if o.errorRecorder != nil {
 		if errorOutput := o.errorRecorder.String(); errorOutput != "" {
@@ -66,6 +63,7 @@ type Option interface {
 type options struct {
 	cmd           *cobra.Command
 	errorRecorder *bytes.Buffer
+	wantError     error
 }
 
 func WithArgs(a ...string) Option {
@@ -97,6 +95,13 @@ func WithErrorOutput(w io.Writer) Option {
 	})
 }
 
+func WithError(err error) Option {
+	return optionFunc(func(o *options) func() {
+		o.wantError = err
+		return nil
+	})
+}
+
 func WithPasswordReader(r PasswordReader) Option {
 	return optionFunc(func(o *options) func() {
 		orig := cmdPasswordReader
@@ -113,6 +118,16 @@ func WithAuthKeysGetter(g AuthKeysGetter) Option {
 		cmdAuthKeysGetter = g
 		return func() {
 			cmdAuthKeysGetter = orig
+		}
+	})
+}
+
+func WithAuthService(s AuthService) Option {
+	return optionFunc(func(o *options) func() {
+		orig := cmdAuthService
+		cmdAuthService = s
+		return func() {
+			cmdAuthService = orig
 		}
 	})
 }

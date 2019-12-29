@@ -7,9 +7,8 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -24,14 +23,10 @@ func Execute() error {
 
 // rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{
-	Use:   "newreleases",
-	Short: "Release tracker for software engineers",
-	Long:  ``,
-	Run: func(cmd *cobra.Command, args []string) {
-		if err := cmd.Help(); err != nil {
-			handleError(cmd, err)
-		}
-	},
+	Use:           "newreleases",
+	Short:         "Release tracker for software engineers",
+	SilenceErrors: true,
+	SilenceUsage:  true,
 }
 
 var cfgFile string
@@ -46,25 +41,23 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	configName := ".newreleases"
+	var home string
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
 		// Find home directory.
-		home := findHomeDir()
+		home = findHomeDir()
 		// Search config in home directory with name ".newreleases" (without extension).
 		viper.AddConfigPath(home)
-		configName := ".newreleases"
 		viper.SetConfigName(configName)
-		configType := "yaml"
-		viper.SetConfigType(configType)
-		cfgFile = filepath.Join(home, configName+"."+configType)
 	}
 
 	// Environment
 	viper.SetEnvPrefix("newreleases")
 	viper.AutomaticEnv() // read in environment variables that match
-	viper.Set(optionNameAuthKey, "")
+	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err != nil {
@@ -72,9 +65,9 @@ func initConfig() {
 		if !errors.As(err, &e) {
 			// Function cobra.OnInitialize does not provide error propagation, so
 			// handle the error as it would be handled in the main package.
-			fmt.Fprintln(os.Stderr, err)
-			exit(1)
-			return
+			must(err)
+		} else if home != "" {
+			cfgFile = filepath.Join(home, configName+".yaml")
 		}
 	}
 }
@@ -84,14 +77,10 @@ func findHomeDir() (dir string) {
 		return testHomeDir
 	}
 	dir, err := homedir.Dir()
-	if err != nil {
-		// Function cobra.OnInitialize does not provide error propagation, so
-		// handle the error as it would be handled in the main package.
-		fmt.Fprintln(os.Stderr, err)
-		exit(1)
-		return
-	}
+	// Function cobra.OnInitialize does not provide error propagation, so
+	// handle the error as it would be handled in the main package.
+	must(err)
 	return dir
 }
 
-var testHomeDir = ""
+var testHomeDir string

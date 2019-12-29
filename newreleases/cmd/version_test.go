@@ -17,7 +17,7 @@ func TestVersionCmd(t *testing.T) {
 	var outputBuf bytes.Buffer
 	cmd.ExecuteT(t, cmd.WithArgs("version"), cmd.WithOutput(&outputBuf))
 
-	want := "v" + nrcmd.Version + "\n"
+	want := nrcmd.Version + "\n"
 	got := outputBuf.String()
 	if got != want {
 		t.Errorf("got output %q, want %q", got, want)
