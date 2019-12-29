@@ -10,12 +10,11 @@ import (
 	"testing"
 
 	nrcmd "newreleases.io/cmd"
-	"newreleases.io/cmd/newreleases/cmd"
 )
 
 func TestVersionCmd(t *testing.T) {
 	var outputBuf bytes.Buffer
-	cmd.ExecuteT(t, cmd.WithArgs("version"), cmd.WithOutput(&outputBuf))
+	ExecuteT(t, WithArgs("version"), WithOutput(&outputBuf))
 
 	want := nrcmd.Version + "\n"
 	got := outputBuf.String()

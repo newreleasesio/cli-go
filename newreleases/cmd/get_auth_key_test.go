@@ -154,14 +154,14 @@ func TestGetAuthKeyCmd(t *testing.T) {
 			}
 
 			var outputBuf, errorOutputBuf bytes.Buffer
-			cmd.ExecuteT(t,
-				cmd.WithArgs(args...),
-				cmd.WithOutput(&outputBuf),
-				cmd.WithErrorOutput(&errorOutputBuf),
-				cmd.WithInput(strings.NewReader(tc.input)),
-				cmd.WithError(tc.wantError),
-				cmd.WithPasswordReader(newMockPasswordReader("myPassword", nil)),
-				cmd.WithAuthKeysGetter(tc.authKeysGetter),
+			ExecuteT(t,
+				WithArgs(args...),
+				WithOutput(&outputBuf),
+				WithErrorOutput(&errorOutputBuf),
+				WithInput(strings.NewReader(tc.input)),
+				WithError(tc.wantError),
+				WithPasswordReader(newMockPasswordReader("myPassword", nil)),
+				WithAuthKeysGetter(tc.authKeysGetter),
 			)
 
 			gotOutput := outputBuf.String()

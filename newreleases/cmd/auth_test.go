@@ -60,11 +60,11 @@ func TestAuthCmd(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			var outputBuf bytes.Buffer
-			cmd.ExecuteT(t,
-				cmd.WithArgs("auth", "list"),
-				cmd.WithOutput(&outputBuf),
-				cmd.WithAuthService(tc.authService),
-				cmd.WithError(tc.wantError),
+			ExecuteT(t,
+				WithArgs("auth", "list"),
+				WithOutput(&outputBuf),
+				WithAuthService(tc.authService),
+				WithError(tc.wantError),
 			)
 
 			gotOutput := outputBuf.String()

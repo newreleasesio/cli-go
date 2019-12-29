@@ -9,8 +9,6 @@ import (
 	"bytes"
 	"strings"
 	"testing"
-
-	"newreleases.io/cmd/newreleases/cmd"
 )
 
 func TestRootCmdHelp(t *testing.T) {
@@ -20,7 +18,7 @@ func TestRootCmdHelp(t *testing.T) {
 		"--help",
 	} {
 		var outputBuf bytes.Buffer
-		cmd.ExecuteT(t, cmd.WithArgs(arg), cmd.WithOutput(&outputBuf))
+		ExecuteT(t, WithArgs(arg), WithOutput(&outputBuf))
 
 		want := "Release tracker for software engineers"
 		got := outputBuf.String()

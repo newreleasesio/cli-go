@@ -16,7 +16,6 @@ import (
 )
 
 // Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() error {
 	return rootCmd.Execute()
 }
@@ -83,4 +82,6 @@ func findHomeDir() (dir string) {
 	return dir
 }
 
+// testHomeDir is set on test runs in order not to interfere with potential
+// configuration in user dir of the user that runs tests.
 var testHomeDir string

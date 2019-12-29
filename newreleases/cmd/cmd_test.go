@@ -3,7 +3,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package cmd
+package cmd_test
 
 import (
 	"bytes"
@@ -12,6 +12,8 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+
+	"newreleases.io/cmd/newreleases/cmd"
 
 	"github.com/spf13/cobra"
 )
@@ -24,7 +26,7 @@ func TestMain(m *testing.M) {
 	}
 	defer os.RemoveAll(dir)
 
-	testHomeDir = dir
+	cmd.SetTestHomeDir(dir)
 
 	os.Exit(m.Run())
 }
@@ -34,19 +36,19 @@ func ExecuteT(t *testing.T, opts ...Option) {
 	t.Helper()
 
 	o := &options{
-		cmd:           rootCmd,
+		cmd:           cmd.RootCmd,
 		errorRecorder: new(bytes.Buffer),
 	}
-	rootCmd.SetErr(o.errorRecorder)
+	cmd.RootCmd.SetErr(o.errorRecorder)
 	for _, opt := range opts {
 		callback := opt.apply(o)
 		if callback != nil {
 			defer callback()
 		}
 	}
-	defer newResetCfgFileFunc()()
+	defer cmd.NewResetCfgFileFunc()()
 
-	if err := Execute(); err != o.wantError {
+	if err := cmd.Execute(); err != o.wantError {
 		t.Fatalf("got error %v, want %v", err, o.wantError)
 	}
 	if o.errorRecorder != nil {
@@ -102,32 +104,29 @@ func WithError(err error) Option {
 	})
 }
 
-func WithPasswordReader(r PasswordReader) Option {
+func WithPasswordReader(r cmd.PasswordReader) Option {
 	return optionFunc(func(o *options) func() {
-		orig := cmdPasswordReader
-		cmdPasswordReader = r
+		orig := cmd.SetCMDPasswordReader(r)
 		return func() {
-			cmdPasswordReader = orig
+			cmd.SetCMDPasswordReader(orig)
 		}
 	})
 }
 
-func WithAuthKeysGetter(g AuthKeysGetter) Option {
+func WithAuthKeysGetter(g cmd.AuthKeysGetter) Option {
 	return optionFunc(func(o *options) func() {
-		orig := cmdAuthKeysGetter
-		cmdAuthKeysGetter = g
+		orig := cmd.SetCMDAuthKeysGetter(g)
 		return func() {
-			cmdAuthKeysGetter = orig
+			cmd.SetCMDAuthKeysGetter(orig)
 		}
 	})
 }
 
-func WithAuthService(s AuthService) Option {
+func WithAuthService(s cmd.AuthService) Option {
 	return optionFunc(func(o *options) func() {
-		orig := cmdAuthService
-		cmdAuthService = s
+		orig := cmd.SetCMDAuthService(s)
 		return func() {
-			cmdAuthService = orig
+			cmd.SetCMDAuthService(orig)
 		}
 	})
 }
@@ -135,16 +134,3 @@ func WithAuthService(s AuthService) Option {
 type optionFunc func(o *options) func()
 
 func (f optionFunc) apply(o *options) func() { return f(o) }
-
-func SetCfgFile(filename string) (reset func()) {
-	reset = newResetCfgFileFunc()
-	cfgFile = filename
-	return reset
-}
-
-func newResetCfgFileFunc() (reset func()) {
-	orig := cfgFile
-	return func() {
-		cfgFile = orig
-	}
-}
