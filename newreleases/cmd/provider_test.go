@@ -38,13 +38,13 @@ func TestProviderCmd(t *testing.T) {
 		{
 			name:             "providers",
 			providersService: newMockProvidersService([]string{"github", "pypi", "cargo", "dockerhub"}, []string{"github", "pypi"}, nil),
-			wantOutput:       "    |   NAME     \n----+------------\n  1 | github     \n  2 | pypi       \n  3 | cargo      \n  4 | dockerhub  \n",
+			wantOutput:       "|   |   NAME    |\n|---|-----------|\n| 1 | github    |\n| 2 | pypi      |\n| 3 | cargo     |\n| 4 | dockerhub |\n",
 		},
 		{
 			name:             "added providers",
 			added:            true,
 			providersService: newMockProvidersService([]string{"github", "pypi", "yarn", "dockerhub"}, []string{"github", "pypi"}, nil),
-			wantOutput:       "    |  NAME   \n----+---------\n  1 | github  \n  2 | pypi    \n",
+			wantOutput:       "|   |  NAME  |\n|---|--------|\n| 1 | github |\n| 2 | pypi   |\n",
 		},
 		{
 			name:             "error",

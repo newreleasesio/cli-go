@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"newreleases.io/newreleases"
 )
@@ -72,8 +71,7 @@ type authService interface {
 }
 
 func printAuthKeysTable(cmd *cobra.Command, keys []newreleases.AuthKey) {
-	table := tablewriter.NewWriter(cmd.OutOrStdout())
-	table.SetBorder(false)
+	table := newTable(cmd.OutOrStdout())
 	table.SetHeader([]string{"", "Name", "Authorized Networks"})
 	for i, key := range keys {
 		var authorizedNetworks []string

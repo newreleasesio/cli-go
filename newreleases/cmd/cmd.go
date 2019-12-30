@@ -7,10 +7,12 @@ package cmd
 
 import (
 	"errors"
+	"io"
 	"path/filepath"
 	"strings"
 
 	"github.com/mitchellh/go-homedir"
+	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"newreleases.io/newreleases"
@@ -145,4 +147,12 @@ func (c *command) writeConfig(cmd *cobra.Command, authKey string) (err error) {
 		err = c.config.SafeWriteConfigAs(c.cfgFile)
 	}
 	return err
+}
+
+func newTable(w io.Writer) (table *tablewriter.Table) {
+	table = tablewriter.NewWriter(w)
+	table.SetAutoWrapText(false)
+	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
+	table.SetCenterSeparator("|")
+	return table
 }

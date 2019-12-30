@@ -27,9 +27,9 @@ func (stdInPasswordReader) ReadPassword() (password string, err error) {
 	return string(v), err
 }
 
-func (c *command) terminalPromptPassword(cmd *cobra.Command, title string) (password string, err error) {
+func terminalPromptPassword(cmd *cobra.Command, r passwordReader, title string) (password string, err error) {
 	cmd.Print(title + ": ")
-	password, err = c.passwordReader.ReadPassword()
+	password, err = r.ReadPassword()
 	cmd.Println()
 	if err != nil {
 		return "", err

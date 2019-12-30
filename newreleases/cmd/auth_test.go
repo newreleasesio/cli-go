@@ -42,7 +42,7 @@ func TestAuthCmd(t *testing.T) {
 		{
 			name:        "single key",
 			authService: newMockAuthService([]newreleases.AuthKey{{Name: "Master", AuthorizedNetworks: []net.IPNet{*ipNet1}}}, nil),
-			wantOutput:  "    |  NAME  | AUTHORIZED NETWORKS  \n----+--------+----------------------\n  1 | Master | 127.0.0.0/8          \n",
+			wantOutput:  "|   |  NAME  | AUTHORIZED NETWORKS |\n|---|--------|---------------------|\n| 1 | Master | 127.0.0.0/8         |\n",
 		},
 		{
 			name: "two keys",
@@ -50,7 +50,7 @@ func TestAuthCmd(t *testing.T) {
 				{Name: "Master", AuthorizedNetworks: []net.IPNet{*ipNet1}},
 				{Name: "Another", AuthorizedNetworks: []net.IPNet{*ipNet1, *ipNet2}},
 			}, nil),
-			wantOutput: "    |  NAME   |     AUTHORIZED NETWORKS      \n----+---------+------------------------------\n  1 | Master  | 127.0.0.0/8                  \n  2 | Another | 127.0.0.0/8, 123.33.44.1/32  \n",
+			wantOutput: "|   |  NAME   |     AUTHORIZED NETWORKS     |\n|---|---------|-----------------------------|\n| 1 | Master  | 127.0.0.0/8                 |\n| 2 | Another | 127.0.0.0/8, 123.33.44.1/32 |\n",
 		},
 		{
 			name:        "error",

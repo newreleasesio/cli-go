@@ -30,7 +30,7 @@ func (c *command) initGetAuthKeyCmd() (err error) {
 			if err != nil {
 				return err
 			}
-			password, err := c.terminalPromptPassword(cmd, "Password")
+			password, err := terminalPromptPassword(cmd, c.passwordReader, "Password")
 			if err != nil {
 				return err
 			}

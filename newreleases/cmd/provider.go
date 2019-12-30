@@ -9,7 +9,6 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 )
 
@@ -85,8 +84,7 @@ type providersService interface {
 }
 
 func printProvidersTable(cmd *cobra.Command, providers []string) {
-	table := tablewriter.NewWriter(cmd.OutOrStdout())
-	table.SetBorder(false)
+	table := newTable(cmd.OutOrStdout())
 	table.SetHeader([]string{"", "Name"})
 	for i, name := range providers {
 		table.Append([]string{strconv.Itoa(i + 1), name})
