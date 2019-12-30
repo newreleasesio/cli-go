@@ -8,12 +8,12 @@ package cmd
 import "io"
 
 type (
-	Command         = command
-	Option          = option
-	PasswordReader  = passwordReader
-	AuthService     = authService
-	AuthKeysGetter  = authKeysGetter
-	ProviderService = providerService
+	Command          = command
+	Option           = option
+	PasswordReader   = passwordReader
+	AuthService      = authService
+	AuthKeysGetter   = authKeysGetter
+	ProvidersService = providersService
 )
 
 var (
@@ -74,8 +74,8 @@ func WithAuthService(s AuthService) func(c *Command) {
 	}
 }
 
-func WithProviderService(s ProviderService) func(c *Command) {
+func WithProvidersService(s ProvidersService) func(c *Command) {
 	return func(c *Command) {
-		c.providerService = s
+		c.providersService = s
 	}
 }

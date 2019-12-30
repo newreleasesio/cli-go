@@ -13,15 +13,6 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-func terminalPrompt(cmd *cobra.Command, reader interface{ ReadString(byte) (string, error) }, title string) (value string, err error) {
-	cmd.Print(title + ": ")
-	value, err = reader.ReadString('\n')
-	if err != nil {
-		return "", err
-	}
-	return strings.TrimSpace(value), nil
-}
-
 type passwordReader interface {
 	ReadPassword() (password string, err error)
 }
@@ -44,4 +35,13 @@ func (c *command) terminalPromptPassword(cmd *cobra.Command, title string) (pass
 		return "", err
 	}
 	return password, nil
+}
+
+func terminalPrompt(cmd *cobra.Command, reader interface{ ReadString(byte) (string, error) }, title string) (value string, err error) {
+	cmd.Print(title + ": ")
+	value, err = reader.ReadString('\n')
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(value), nil
 }

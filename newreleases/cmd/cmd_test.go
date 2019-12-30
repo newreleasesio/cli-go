@@ -32,8 +32,7 @@ func TestMain(m *testing.M) {
 func newCommand(t *testing.T, opts ...cmd.Option) (c *cmd.Command) {
 	t.Helper()
 
-	opts = append([]cmd.Option{cmd.WithHomeDir(homeDir)}, opts...)
-	c, err := cmd.NewCommand(opts...)
+	c, err := cmd.NewCommand(append([]cmd.Option{cmd.WithHomeDir(homeDir)}, opts...)...)
 	if err != nil {
 		t.Fatal(err)
 	}

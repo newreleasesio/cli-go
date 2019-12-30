@@ -36,9 +36,9 @@ func (c *command) initProviderCmd() (err error) {
 			}
 
 			if added {
-				providers, err = c.providerService.ListAdded(ctx)
+				providers, err = c.providersService.ListAdded(ctx)
 			} else {
-				providers, err = c.providerService.List(ctx)
+				providers, err = c.providersService.List(ctx)
 			}
 			if err != nil {
 				return err
@@ -53,7 +53,7 @@ func (c *command) initProviderCmd() (err error) {
 
 			return nil
 		},
-		PreRunE: c.setProviderService,
+		PreRunE: c.setProvidersService,
 	}
 
 	listCmd.Flags().Bool(optionNameAdded, false, "get only providers for projects that are added for tracking")
@@ -67,19 +67,19 @@ func (c *command) initProviderCmd() (err error) {
 	return nil
 }
 
-func (c *command) setProviderService(cmd *cobra.Command, args []string) (err error) {
-	if c.providerService != nil {
+func (c *command) setProvidersService(cmd *cobra.Command, args []string) (err error) {
+	if c.providersService != nil {
 		return nil
 	}
 	client, err := c.getClient(cmd)
 	if err != nil {
 		return err
 	}
-	c.providerService = client.Providers
+	c.providersService = client.Providers
 	return nil
 }
 
-type providerService interface {
+type providersService interface {
 	List(ctx context.Context) (providers []string, err error)
 	ListAdded(ctx context.Context) (providers []string, err error)
 }

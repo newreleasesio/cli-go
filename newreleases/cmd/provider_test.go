@@ -18,38 +18,38 @@ func TestProviderCmd(t *testing.T) {
 	errTest := errors.New("test error")
 
 	for _, tc := range []struct {
-		name            string
-		providerService cmd.ProviderService
-		added           bool
-		wantOutput      string
-		wantError       error
+		name             string
+		providersService cmd.ProvidersService
+		added            bool
+		wantOutput       string
+		wantError        error
 	}{
 		{
-			name:            "no providers",
-			providerService: newMockProviderService(nil, nil, nil),
-			wantOutput:      "No providers found.\n",
+			name:             "no providers",
+			providersService: newMockProvidersService(nil, nil, nil),
+			wantOutput:       "No providers found.\n",
 		},
 		{
-			name:            "no added providers",
-			added:           true,
-			providerService: newMockProviderService([]string{"github", "pypi", "npm"}, nil, nil),
-			wantOutput:      "No providers found.\n",
+			name:             "no added providers",
+			added:            true,
+			providersService: newMockProvidersService([]string{"github", "pypi", "npm"}, nil, nil),
+			wantOutput:       "No providers found.\n",
 		},
 		{
-			name:            "providers",
-			providerService: newMockProviderService([]string{"github", "pypi", "cargo", "dockerhub"}, []string{"github", "pypi"}, nil),
-			wantOutput:      "    |   NAME     \n----+------------\n  1 | github     \n  2 | pypi       \n  3 | cargo      \n  4 | dockerhub  \n",
+			name:             "providers",
+			providersService: newMockProvidersService([]string{"github", "pypi", "cargo", "dockerhub"}, []string{"github", "pypi"}, nil),
+			wantOutput:       "    |   NAME     \n----+------------\n  1 | github     \n  2 | pypi       \n  3 | cargo      \n  4 | dockerhub  \n",
 		},
 		{
-			name:            "added providers",
-			added:           true,
-			providerService: newMockProviderService([]string{"github", "pypi", "yarn", "dockerhub"}, []string{"github", "pypi"}, nil),
-			wantOutput:      "    |  NAME   \n----+---------\n  1 | github  \n  2 | pypi    \n",
+			name:             "added providers",
+			added:            true,
+			providersService: newMockProvidersService([]string{"github", "pypi", "yarn", "dockerhub"}, []string{"github", "pypi"}, nil),
+			wantOutput:       "    |  NAME   \n----+---------\n  1 | github  \n  2 | pypi    \n",
 		},
 		{
-			name:            "error",
-			providerService: newMockProviderService(nil, nil, errTest),
-			wantError:       errTest,
+			name:             "error",
+			providersService: newMockProvidersService(nil, nil, errTest),
+			wantError:        errTest,
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -61,7 +61,7 @@ func TestProviderCmd(t *testing.T) {
 			c := newCommand(t,
 				cmd.WithArgs(args...),
 				cmd.WithOutput(&outputBuf),
-				cmd.WithProviderService(tc.providerService),
+				cmd.WithProvidersService(tc.providersService),
 			)
 			if err := c.Execute(); err != tc.wantError {
 				t.Fatalf("got error %v, want %v", err, tc.wantError)
@@ -75,20 +75,20 @@ func TestProviderCmd(t *testing.T) {
 	}
 }
 
-type mockProviderService struct {
+type mockProvidersService struct {
 	providers      []string
 	addedProviders []string
 	err            error
 }
 
-func newMockProviderService(providers, addedProviders []string, err error) (s mockProviderService) {
-	return mockProviderService{providers: providers, addedProviders: addedProviders, err: err}
+func newMockProvidersService(providers, addedProviders []string, err error) (s mockProvidersService) {
+	return mockProvidersService{providers: providers, addedProviders: addedProviders, err: err}
 }
 
-func (s mockProviderService) List(ctx context.Context) (providers []string, err error) {
+func (s mockProvidersService) List(ctx context.Context) (providers []string, err error) {
 	return s.providers, s.err
 }
 
-func (s mockProviderService) ListAdded(ctx context.Context) (providers []string, err error) {
+func (s mockProvidersService) ListAdded(ctx context.Context) (providers []string, err error) {
 	return s.addedProviders, s.err
 }

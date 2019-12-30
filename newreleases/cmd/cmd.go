@@ -23,15 +23,15 @@ const (
 )
 
 type command struct {
-	root            *cobra.Command
-	config          *viper.Viper
-	client          *newreleases.Client
-	cfgFile         string
-	homeDir         string
-	passwordReader  passwordReader
-	authService     authService
-	providerService providerService
-	authKeysGetter  authKeysGetter
+	root             *cobra.Command
+	config           *viper.Viper
+	client           *newreleases.Client
+	cfgFile          string
+	homeDir          string
+	passwordReader   passwordReader
+	authService      authService
+	providersService providersService
+	authKeysGetter   authKeysGetter
 }
 
 type option func(*command)
