@@ -147,22 +147,27 @@ func TestGetAuthKeyCmd(t *testing.T) {
 			}
 
 			args := []string{"get-auth-key"}
+			var setCfgFile string
 			if tc.withConfigFlag {
 				args = append(args, "--config", cfgFile)
 			} else {
-				defer cmd.SetCfgFile(cfgFile)()
+				setCfgFile = cfgFile
 			}
 
 			var outputBuf, errorOutputBuf bytes.Buffer
-			ExecuteT(t,
-				WithArgs(args...),
-				WithOutput(&outputBuf),
-				WithErrorOutput(&errorOutputBuf),
-				WithInput(strings.NewReader(tc.input)),
-				WithError(tc.wantError),
-				WithPasswordReader(newMockPasswordReader("myPassword", nil)),
-				WithAuthKeysGetter(tc.authKeysGetter),
+			c := newCommand(t,
+				cmd.WithCfgFile(setCfgFile),
+				cmd.WithHomeDir(dir),
+				cmd.WithArgs(args...),
+				cmd.WithOutput(&outputBuf),
+				cmd.WithErrorOutput(&errorOutputBuf),
+				cmd.WithInput(strings.NewReader(tc.input)),
+				cmd.WithPasswordReader(newMockPasswordReader("myPassword", nil)),
+				cmd.WithAuthKeysGetter(tc.authKeysGetter),
 			)
+			if err := c.Execute(); err != tc.wantError {
+				t.Fatalf("got error %v, want %v", err, tc.wantError)
+			}
 
 			gotOutput := outputBuf.String()
 			if wantOutput := tc.wantOutputFunc(cfgFile); wantOutput != "" {

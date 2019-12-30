@@ -5,43 +5,77 @@
 
 package cmd
 
-var RootCmd = rootCmd
+import "io"
 
-func SetTestHomeDir(dir string) {
-	testHomeDir = dir
+type (
+	Command         = command
+	Option          = option
+	PasswordReader  = passwordReader
+	AuthService     = authService
+	AuthKeysGetter  = authKeysGetter
+	ProviderService = providerService
+)
+
+var (
+	NewCommand = newCommand
+)
+
+func WithCfgFile(f string) func(c *Command) {
+	return func(c *Command) {
+		c.cfgFile = f
+	}
 }
 
-func SetCfgFile(filename string) (reset func()) {
-	reset = NewResetCfgFileFunc()
-	cfgFile = filename
-	return reset
+func WithHomeDir(dir string) func(c *Command) {
+	return func(c *Command) {
+		c.homeDir = dir
+	}
 }
 
-func NewResetCfgFileFunc() (reset func()) {
-	orig := cfgFile
-	return func() { cfgFile = orig }
+func WithArgs(a ...string) func(c *Command) {
+	return func(c *Command) {
+		c.root.SetArgs(a)
+	}
 }
 
-type PasswordReader = passwordReader
-
-func SetCMDPasswordReader(new PasswordReader) (orig PasswordReader) {
-	orig = cmdPasswordReader
-	cmdPasswordReader = new
-	return orig
+func WithInput(r io.Reader) func(c *Command) {
+	return func(c *Command) {
+		c.root.SetIn(r)
+	}
 }
 
-type AuthKeysGetter = authKeysGetter
-
-func SetCMDAuthKeysGetter(new AuthKeysGetter) (orig AuthKeysGetter) {
-	orig = cmdAuthKeysGetter
-	cmdAuthKeysGetter = new
-	return orig
+func WithOutput(w io.Writer) func(c *Command) {
+	return func(c *Command) {
+		c.root.SetOut(w)
+	}
 }
 
-type AuthService = authService
+func WithErrorOutput(w io.Writer) func(c *Command) {
+	return func(c *Command) {
+		c.root.SetErr(w)
+	}
+}
 
-func SetCMDAuthService(new AuthService) (orig AuthService) {
-	orig = cmdAuthService
-	cmdAuthService = new
-	return orig
+func WithPasswordReader(r PasswordReader) func(c *Command) {
+	return func(c *Command) {
+		c.passwordReader = r
+	}
+}
+
+func WithAuthKeysGetter(g AuthKeysGetter) func(c *Command) {
+	return func(c *Command) {
+		c.authKeysGetter = g
+	}
+}
+
+func WithAuthService(s AuthService) func(c *Command) {
+	return func(c *Command) {
+		c.authService = s
+	}
+}
+
+func WithProviderService(s ProviderService) func(c *Command) {
+	return func(c *Command) {
+		c.providerService = s
+	}
 }

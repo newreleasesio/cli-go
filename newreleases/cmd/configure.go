@@ -11,8 +11,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	rootCmd.AddCommand(&cobra.Command{
+func (c *command) initConfigureCmd() {
+	c.root.AddCommand(&cobra.Command{
 		Use:   "configure",
 		Short: "Provide configuration values to be stored in a file",
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -28,11 +28,11 @@ func init() {
 				return nil
 			}
 
-			if err := writeConfig(cmd, authKey); err != nil {
+			if err := c.writeConfig(cmd, authKey); err != nil {
 				return err
 			}
 
-			cmd.Printf("Configuration saved to: %s.\n", cfgFile)
+			cmd.Printf("Configuration saved to: %s.\n", c.cfgFile)
 			return nil
 		},
 	})

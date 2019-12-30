@@ -10,11 +10,18 @@ import (
 	"testing"
 
 	nrcmd "newreleases.io/cmd"
+	"newreleases.io/cmd/newreleases/cmd"
 )
 
 func TestVersionCmd(t *testing.T) {
 	var outputBuf bytes.Buffer
-	ExecuteT(t, WithArgs("version"), WithOutput(&outputBuf))
+	c := newCommand(t,
+		cmd.WithArgs("version"),
+		cmd.WithOutput(&outputBuf),
+	)
+	if err := c.Execute(); err != nil {
+		t.Fatal(err)
+	}
 
 	want := nrcmd.Version + "\n"
 	got := outputBuf.String()

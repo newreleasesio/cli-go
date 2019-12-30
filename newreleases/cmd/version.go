@@ -11,8 +11,8 @@ import (
 	nrcmd "newreleases.io/cmd"
 )
 
-func init() {
-	rootCmd.AddCommand(&cobra.Command{
+func (c *command) initVersionCmd() {
+	c.root.AddCommand(&cobra.Command{
 		Use:   "version",
 		Short: "Print version number",
 		Run: func(cmd *cobra.Command, args []string) {

@@ -6,17 +6,13 @@
 package cmd
 
 import (
-	"context"
 	"errors"
-	"fmt"
-	"net/url"
-	"os"
+	"path/filepath"
 	"strings"
-	"time"
 
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"golang.org/x/crypto/ssh/terminal"
 	"newreleases.io/newreleases"
 )
 
@@ -26,93 +22,127 @@ const (
 	optionNameAPIEndpoint = "api-endpoint"
 )
 
-var cmdPasswordReader passwordReader = new(stdInPasswordReader)
-
-type passwordReader interface {
-	ReadPassword() (password string, err error)
+type command struct {
+	root            *cobra.Command
+	config          *viper.Viper
+	client          *newreleases.Client
+	cfgFile         string
+	homeDir         string
+	passwordReader  passwordReader
+	authService     authService
+	providerService providerService
+	authKeysGetter  authKeysGetter
 }
 
-type stdInPasswordReader struct{}
+type option func(*command)
 
-func (stdInPasswordReader) ReadPassword() (password string, err error) {
-	v, err := terminal.ReadPassword(int(os.Stdin.Fd()))
-	if err != nil {
-		return "", err
+func newCommand(opts ...option) (c *command, err error) {
+	c = &command{
+		root: &cobra.Command{
+			Use:           "newreleases",
+			Short:         "Release tracker for software engineers",
+			SilenceErrors: true,
+			SilenceUsage:  true,
+		},
 	}
-	return string(v), err
-}
 
-func terminalPrompt(cmd *cobra.Command, reader interface{ ReadString(byte) (string, error) }, title string) (value string, err error) {
-	cmd.Print(title + ": ")
-	value, err = reader.ReadString('\n')
-	if err != nil {
-		return "", err
+	for _, o := range opts {
+		o(c)
 	}
-	return strings.TrimSpace(value), nil
-}
-
-func terminalPromptPassword(cmd *cobra.Command, title string) (password string, err error) {
-	cmd.Print(title + ": ")
-	password, err = cmdPasswordReader.ReadPassword()
-	cmd.Println()
-	if err != nil {
-		return "", err
+	if c.passwordReader == nil {
+		c.passwordReader = new(stdInPasswordReader)
 	}
-	return password, nil
+
+	c.initGlobalFlags()
+	if err := c.initConfig(); err != nil {
+		return nil, err
+	}
+
+	if err := c.initAuthCmd(); err != nil {
+		return nil, err
+	}
+	c.initConfigureCmd()
+	if err := c.initGetAuthKeyCmd(); err != nil {
+		return nil, err
+	}
+	if err := c.initProviderCmd(); err != nil {
+		return nil, err
+	}
+	c.initVersionCmd()
+	return c, nil
 }
 
-func writeConfig(cmd *cobra.Command, authKey string) (err error) {
-	viper.Set(optionNameAuthKey, strings.TrimSpace(authKey))
-	err = viper.WriteConfig()
+func (c *command) Execute() (err error) {
+	return c.root.Execute()
+}
+
+// Execute parses command line arguments and runs appropriate functions.
+func Execute() (err error) {
+	c, err := newCommand()
+	if err != nil {
+		return err
+	}
+	return c.Execute()
+}
+
+func (c *command) initGlobalFlags() {
+	globalFlags := c.root.PersistentFlags()
+	globalFlags.StringVar(&c.cfgFile, "config", "", "config file (default is $HOME/.newreleases.yaml)")
+}
+
+func (c *command) initConfig() (err error) {
+	config := viper.New()
+	configName := ".newreleases"
+	if c.cfgFile != "" {
+		// Use config file from the flag.
+		config.SetConfigFile(c.cfgFile)
+	} else {
+		// Find home directory.
+		if err := c.setHomeDir(); err != nil {
+			return err
+		}
+		// Search config in home directory with name ".newreleases" (without extension).
+		config.AddConfigPath(c.homeDir)
+		config.SetConfigName(configName)
+	}
+
+	// Environment
+	config.SetEnvPrefix("newreleases")
+	config.AutomaticEnv() // read in environment variables that match
+	config.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+
+	if c.homeDir != "" && c.cfgFile == "" {
+		c.cfgFile = filepath.Join(c.homeDir, configName+".yaml")
+	}
+
+	// If a config file is found, read it in.
+	if err := config.ReadInConfig(); err != nil {
+		var e viper.ConfigFileNotFoundError
+		if !errors.As(err, &e) {
+			return err
+		}
+	}
+	c.config = config
+	return nil
+}
+
+func (c *command) setHomeDir() (err error) {
+	if c.homeDir != "" {
+		return
+	}
+	dir, err := homedir.Dir()
+	if err != nil {
+		return err
+	}
+	c.homeDir = dir
+	return nil
+}
+
+func (c *command) writeConfig(cmd *cobra.Command, authKey string) (err error) {
+	c.config.Set(optionNameAuthKey, strings.TrimSpace(authKey))
+	err = c.config.WriteConfig()
 	if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-		err = viper.SafeWriteConfigAs(cfgFile)
+		err = c.config.SafeWriteConfigAs(c.cfgFile)
 	}
 	return err
-}
-
-func newClient() (client *newreleases.Client, err error) {
-	authKey := viper.GetString(optionNameAuthKey)
-	if authKey == "" {
-		return nil, errors.New("auth key not configured")
-	}
-	return newreleases.NewClient(authKey, newClientOptions()), nil
-}
-
-func addClientFlags(cmd *cobra.Command) {
-	flags := cmd.Flags()
-	flags.String(optionNameAuthKey, "", "API auth key")
-	flags.Duration(optionNameTimeout, 30*time.Second, "API request timeout")
-	flags.String(optionNameAPIEndpoint, "", "API Endpoint")
-	must(flags.MarkHidden(optionNameAPIEndpoint))
-
-	cobra.OnInitialize(func() {
-		must(viper.BindPFlag(optionNameAuthKey, flags.Lookup(optionNameAuthKey)))
-		must(viper.BindPFlag(optionNameTimeout, flags.Lookup(optionNameTimeout)))
-	})
-}
-
-func newClientOptions() (o *newreleases.ClientOptions) {
-	return &newreleases.ClientOptions{
-		BaseURL: mustURLParse(viper.GetString(optionNameAPIEndpoint)),
-	}
-}
-
-func newClientContext() (ctx context.Context, cancel context.CancelFunc) {
-	return context.WithTimeout(context.Background(), viper.GetDuration(optionNameTimeout))
-}
-
-func must(err error) {
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error:", err)
-		os.Exit(1)
-	}
-}
-
-func mustURLParse(s string) (u *url.URL) {
-	if s == "" {
-		return nil
-	}
-	u, err := url.Parse(s)
-	must(err)
-	return u
 }

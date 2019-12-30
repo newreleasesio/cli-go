@@ -1,0 +1,47 @@
+// Copyright (c) 2019, NewReleases CLI AUTHORS.
+// All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+package cmd
+
+import (
+	"os"
+	"strings"
+
+	"github.com/spf13/cobra"
+	"golang.org/x/crypto/ssh/terminal"
+)
+
+func terminalPrompt(cmd *cobra.Command, reader interface{ ReadString(byte) (string, error) }, title string) (value string, err error) {
+	cmd.Print(title + ": ")
+	value, err = reader.ReadString('\n')
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(value), nil
+}
+
+type passwordReader interface {
+	ReadPassword() (password string, err error)
+}
+
+type stdInPasswordReader struct{}
+
+func (stdInPasswordReader) ReadPassword() (password string, err error) {
+	v, err := terminal.ReadPassword(int(os.Stdin.Fd()))
+	if err != nil {
+		return "", err
+	}
+	return string(v), err
+}
+
+func (c *command) terminalPromptPassword(cmd *cobra.Command, title string) (password string, err error) {
+	cmd.Print(title + ": ")
+	password, err = c.passwordReader.ReadPassword()
+	cmd.Println()
+	if err != nil {
+		return "", err
+	}
+	return password, nil
+}

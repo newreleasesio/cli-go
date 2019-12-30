@@ -15,7 +15,7 @@ import (
 	"newreleases.io/newreleases"
 )
 
-func init() {
+func (c *command) initAuthCmd() (err error) {
 	authCmd := &cobra.Command{
 		Use:   "auth",
 		Short: "Information about API authentication",
@@ -25,10 +25,10 @@ func init() {
 		Use:   "list",
 		Short: "Get all API authentication keys",
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			ctx, cancel := newClientContext()
+			ctx, cancel := newClientContext(c.config)
 			defer cancel()
 
-			keys, err := cmdAuthService.List(ctx)
+			keys, err := c.authService.List(ctx)
 			if err != nil {
 				return err
 			}
@@ -42,27 +42,28 @@ func init() {
 
 			return nil
 		},
-		PreRunE: setCmdAuthService,
+		PreRunE: c.setAuthService,
 	}
 
-	addClientFlags(listCmd)
+	if err := addClientFlags(listCmd, c.config); err != nil {
+		return err
+	}
 
 	authCmd.AddCommand(listCmd)
 
-	rootCmd.AddCommand(authCmd)
+	c.root.AddCommand(authCmd)
+	return nil
 }
 
-var cmdAuthService authService
-
-func setCmdAuthService(cmd *cobra.Command, args []string) (err error) {
-	if cmdAuthService != nil {
+func (c *command) setAuthService(cmd *cobra.Command, args []string) (err error) {
+	if c.authService != nil {
 		return nil
 	}
-	client, err := newClient()
+	client, err := c.getClient(cmd)
 	if err != nil {
 		return err
 	}
-	cmdAuthService = client.Auth
+	c.authService = client.Auth
 	return nil
 }
 

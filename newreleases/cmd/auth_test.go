@@ -60,16 +60,19 @@ func TestAuthCmd(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			var outputBuf bytes.Buffer
-			ExecuteT(t,
-				WithArgs("auth", "list"),
-				WithOutput(&outputBuf),
-				WithAuthService(tc.authService),
-				WithError(tc.wantError),
+
+			c := newCommand(t,
+				cmd.WithArgs("auth", "list"),
+				cmd.WithOutput(&outputBuf),
+				cmd.WithAuthService(tc.authService),
 			)
+			if err := c.Execute(); err != tc.wantError {
+				t.Fatalf("got error %v, want %v", err, tc.wantError)
+			}
 
 			gotOutput := outputBuf.String()
 			if gotOutput != tc.wantOutput {
-				t.Errorf("got error output %q, want %q", gotOutput, tc.wantOutput)
+				t.Errorf("got output %q, want %q", gotOutput, tc.wantOutput)
 			}
 		})
 	}

@@ -72,19 +72,25 @@ func TestConfigureCmd(t *testing.T) {
 			}
 
 			args := []string{"configure"}
+			var setCfgFile string
 			if tc.withConfigFlag {
 				args = append(args, "--config", cfgFile)
 			} else {
-				defer cmd.SetCfgFile(cfgFile)()
+				setCfgFile = cfgFile
 			}
 
 			var outputBuf, errorOutputBuf bytes.Buffer
-			ExecuteT(t,
-				WithArgs(args...),
-				WithOutput(&outputBuf),
-				WithErrorOutput(&errorOutputBuf),
-				WithInput(strings.NewReader(tc.authKey+"\n")),
+			c := newCommand(t,
+				cmd.WithArgs(args...),
+				cmd.WithOutput(&outputBuf),
+				cmd.WithErrorOutput(&errorOutputBuf),
+				cmd.WithInput(strings.NewReader(tc.authKey+"\n")),
+				cmd.WithCfgFile(setCfgFile),
+				cmd.WithHomeDir(dir),
 			)
+			if err := c.Execute(); err != nil {
+				t.Fatal(err)
+			}
 
 			gotOutput := outputBuf.String()
 			if wantOutput := tc.wantOutputFunc(cfgFile); wantOutput != "" {
@@ -136,17 +142,21 @@ func TestConfigureCmd_overwrite(t *testing.T) {
 	if err := f.Close(); err != nil {
 		t.Fatal(err)
 	}
-	defer cmd.SetCfgFile(cfgFile)()
 
 	testConfigre := func(t *testing.T, authKey string) {
 		t.Helper()
 
 		var outputBuf bytes.Buffer
-		ExecuteT(t,
-			WithArgs("configure"),
-			WithOutput(&outputBuf),
-			WithInput(strings.NewReader(authKey+"\n")),
+		c := newCommand(t,
+			cmd.WithCfgFile(cfgFile),
+			cmd.WithHomeDir(dir),
+			cmd.WithArgs("configure"),
+			cmd.WithOutput(&outputBuf),
+			cmd.WithInput(strings.NewReader(authKey+"\n")),
 		)
+		if err := c.Execute(); err != nil {
+			t.Fatal(err)
+		}
 
 		gotOutput := outputBuf.String()
 		wantOutput := fmt.Sprintf("Auth Key: Configuration saved to: %s.\n", cfgFile)

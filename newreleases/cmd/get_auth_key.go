@@ -16,7 +16,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func init() {
+func (c *command) initGetAuthKeyCmd() (err error) {
 	getAuthKeyCmd := &cobra.Command{
 		Use:   "get-auth-key",
 		Short: "Get API auth key and store it in the configuration",
@@ -30,15 +30,19 @@ func init() {
 			if err != nil {
 				return err
 			}
-			password, err := terminalPromptPassword(cmd, "Password")
+			password, err := c.terminalPromptPassword(cmd, "Password")
 			if err != nil {
 				return err
 			}
 
-			ctx, cancel := newClientContext()
+			ctx, cancel := newClientContext(c.config)
 			defer cancel()
 
-			keys, err := cmdAuthKeysGetter.GetAuthKeys(ctx, email, password, newClientOptions())
+			o, err := newClientOptions(cmd)
+			if err != nil {
+				return err
+			}
+			keys, err := c.authKeysGetter.GetAuthKeys(ctx, email, password, o)
 			if err != nil {
 				return err
 			}
@@ -79,20 +83,32 @@ func init() {
 			}
 
 			key := keys[selection]
-			if err := writeConfig(cmd, key.Secret); err != nil {
+			if err := c.writeConfig(cmd, key.Secret); err != nil {
 				return err
 			}
 			cmd.Printf("Using auth key: %s.\n", key.Name)
 
-			cmd.Printf("Configuration saved to: %s.\n", cfgFile)
+			cmd.Printf("Configuration saved to: %s.\n", c.cfgFile)
 			return nil
 		},
+		PreRunE: c.setAuthKeysGetter,
 	}
 
-	rootCmd.AddCommand(getAuthKeyCmd)
+	if err := addClientFlags(getAuthKeyCmd, c.config); err != nil {
+		return err
+	}
+
+	c.root.AddCommand(getAuthKeyCmd)
+	return nil
 }
 
-var cmdAuthKeysGetter authKeysGetter = authKeysGetterFunc(newreleases.GetAuthKeys)
+func (c *command) setAuthKeysGetter(cmd *cobra.Command, args []string) (err error) {
+	if c.authKeysGetter != nil {
+		return nil
+	}
+	c.authKeysGetter = authKeysGetterFunc(newreleases.GetAuthKeys)
+	return nil
+}
 
 type authKeysGetter interface {
 	GetAuthKeys(ctx context.Context, email, password string, o *newreleases.ClientOptions) (keys []newreleases.AuthKey, err error)
