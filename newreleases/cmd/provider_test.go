@@ -8,15 +8,12 @@ package cmd_test
 import (
 	"bytes"
 	"context"
-	"errors"
 	"testing"
 
 	"newreleases.io/cmd/newreleases/cmd"
 )
 
 func TestProviderCmd(t *testing.T) {
-	errTest := errors.New("test error")
-
 	for _, tc := range []struct {
 		name             string
 		providersService cmd.ProvidersService
@@ -38,13 +35,13 @@ func TestProviderCmd(t *testing.T) {
 		{
 			name:             "providers",
 			providersService: newMockProvidersService([]string{"github", "pypi", "cargo", "dockerhub"}, []string{"github", "pypi"}, nil),
-			wantOutput:       "|   |   NAME    |\n|---|-----------|\n| 1 | github    |\n| 2 | pypi      |\n| 3 | cargo     |\n| 4 | dockerhub |\n",
+			wantOutput:       "ID        \ngithub      \npypi        \ncargo       \ndockerhub   \n",
 		},
 		{
 			name:             "added providers",
 			added:            true,
 			providersService: newMockProvidersService([]string{"github", "pypi", "yarn", "dockerhub"}, []string{"github", "pypi"}, nil),
-			wantOutput:       "|   |  NAME  |\n|---|--------|\n| 1 | github |\n| 2 | pypi   |\n",
+			wantOutput:       "ID     \ngithub   \npypi     \n",
 		},
 		{
 			name:             "error",
@@ -53,17 +50,16 @@ func TestProviderCmd(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			args := []string{"provider", "list"}
+			args := []string{"provider"}
 			if tc.added {
 				args = append(args, "--added")
 			}
 			var outputBuf bytes.Buffer
-			c := newCommand(t,
+			if err := newCommand(t,
 				cmd.WithArgs(args...),
 				cmd.WithOutput(&outputBuf),
 				cmd.WithProvidersService(tc.providersService),
-			)
-			if err := c.Execute(); err != tc.wantError {
+			).Execute(); err != tc.wantError {
 				t.Fatalf("got error %v, want %v", err, tc.wantError)
 			}
 

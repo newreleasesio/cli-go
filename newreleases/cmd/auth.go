@@ -7,7 +7,6 @@ package cmd
 
 import (
 	"context"
-	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -15,14 +14,9 @@ import (
 )
 
 func (c *command) initAuthCmd() (err error) {
-	authCmd := &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "auth",
-		Short: "Information about API authentication",
-	}
-
-	listCmd := &cobra.Command{
-		Use:   "list",
-		Short: "Get all API authentication keys",
+		Short: "Get API authentication keys",
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			ctx, cancel := newClientContext(c.config)
 			defer cancel()
@@ -44,13 +38,11 @@ func (c *command) initAuthCmd() (err error) {
 		PreRunE: c.setAuthService,
 	}
 
-	if err := addClientFlags(listCmd, c.config); err != nil {
+	if err := addClientFlags(cmd, c.config); err != nil {
 		return err
 	}
 
-	authCmd.AddCommand(listCmd)
-
-	c.root.AddCommand(authCmd)
+	c.root.AddCommand(cmd)
 	return nil
 }
 
@@ -72,13 +64,13 @@ type authService interface {
 
 func printAuthKeysTable(cmd *cobra.Command, keys []newreleases.AuthKey) {
 	table := newTable(cmd.OutOrStdout())
-	table.SetHeader([]string{"", "Name", "Authorized Networks"})
-	for i, key := range keys {
+	table.SetHeader([]string{"Name", "Authorized Networks", "Secret"})
+	for _, key := range keys {
 		var authorizedNetworks []string
 		for _, an := range key.AuthorizedNetworks {
 			authorizedNetworks = append(authorizedNetworks, an.String())
 		}
-		table.Append([]string{strconv.Itoa(i + 1), key.Name, strings.Join(authorizedNetworks, ", ")})
+		table.Append([]string{key.Name, strings.Join(authorizedNetworks, ", "), key.Secret})
 	}
 	table.Render()
 }

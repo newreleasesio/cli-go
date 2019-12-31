@@ -10,6 +10,7 @@ import (
 	"context"
 	"io"
 	"strconv"
+	"strings"
 
 	"newreleases.io/newreleases"
 
@@ -58,7 +59,7 @@ func (c *command) initGetAuthKeyCmd() (err error) {
 			if count > 1 {
 
 				cmd.Println()
-				printAuthKeysTable(cmd, keys)
+				printAuthKeysTableSafe(cmd, keys)
 				cmd.Println()
 
 				for {
@@ -118,4 +119,17 @@ type authKeysGetterFunc func(ctx context.Context, email, password string, o *new
 
 func (f authKeysGetterFunc) GetAuthKeys(ctx context.Context, email, password string, o *newreleases.ClientOptions) (keys []newreleases.AuthKey, err error) {
 	return f(ctx, email, password, o)
+}
+
+func printAuthKeysTableSafe(cmd *cobra.Command, keys []newreleases.AuthKey) {
+	table := newTable(cmd.OutOrStdout())
+	table.SetHeader([]string{"", "Name", "Authorized Networks"})
+	for i, key := range keys {
+		var authorizedNetworks []string
+		for _, an := range key.AuthorizedNetworks {
+			authorizedNetworks = append(authorizedNetworks, an.String())
+		}
+		table.Append([]string{strconv.Itoa(i + 1), key.Name, strings.Join(authorizedNetworks, ", ")})
+	}
+	table.Render()
 }

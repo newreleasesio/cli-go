@@ -25,15 +25,22 @@ const (
 )
 
 type command struct {
-	root             *cobra.Command
-	config           *viper.Viper
-	client           *newreleases.Client
-	cfgFile          string
-	homeDir          string
-	passwordReader   passwordReader
-	authService      authService
-	providersService providersService
-	authKeysGetter   authKeysGetter
+	root                          *cobra.Command
+	config                        *viper.Viper
+	client                        *newreleases.Client
+	cfgFile                       string
+	homeDir                       string
+	passwordReader                passwordReader
+	authKeysGetter                authKeysGetter
+	authService                   authService
+	releasesService               releasesService
+	providersService              providersService
+	slackChannelsService          slackChannelsService
+	telegramChatsService          telegramChatsService
+	discordChannelsService        discordChannelsService
+	hangoutsChatWebhooksService   hangoutsChatWebhooksService
+	microsoftTeamsWebhooksService microsoftTeamsWebhooksService
+	webhooksService               webhooksService
 }
 
 type option func(*command)
@@ -63,11 +70,33 @@ func newCommand(opts ...option) (c *command, err error) {
 	if err := c.initAuthCmd(); err != nil {
 		return nil, err
 	}
-	c.initConfigureCmd()
-	if err := c.initGetAuthKeyCmd(); err != nil {
+	if err := c.initProviderCmd(); err != nil {
 		return nil, err
 	}
-	if err := c.initProviderCmd(); err != nil {
+	if err := c.initReleaseCmd(); err != nil {
+		return nil, err
+	}
+	if err := c.initSlackCmd(); err != nil {
+		return nil, err
+	}
+	if err := c.initTelegramCmd(); err != nil {
+		return nil, err
+	}
+	if err := c.initDiscordCmd(); err != nil {
+		return nil, err
+	}
+	if err := c.initHangoutsChatCmd(); err != nil {
+		return nil, err
+	}
+	if err := c.initMicrosoftTeamsCmd(); err != nil {
+		return nil, err
+	}
+	if err := c.initWebhookCmd(); err != nil {
+		return nil, err
+	}
+
+	c.initConfigureCmd()
+	if err := c.initGetAuthKeyCmd(); err != nil {
 		return nil, err
 	}
 	c.initVersionCmd()
@@ -152,7 +181,22 @@ func (c *command) writeConfig(cmd *cobra.Command, authKey string) (err error) {
 func newTable(w io.Writer) (table *tablewriter.Table) {
 	table = tablewriter.NewWriter(w)
 	table.SetAutoWrapText(false)
-	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
-	table.SetCenterSeparator("|")
+	table.SetAutoFormatHeaders(true)
+	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetCenterSeparator("")
+	table.SetColumnSeparator("")
+	table.SetRowSeparator("")
+	table.SetHeaderLine(false)
+	table.SetBorder(false)
+	table.SetTablePadding("   ")
+	table.SetNoWhiteSpace(true)
 	return table
+}
+
+func yesNo(b bool) (s string) {
+	if b {
+		return "yes"
+	}
+	return "no"
 }

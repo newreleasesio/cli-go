@@ -80,15 +80,14 @@ func TestConfigureCmd(t *testing.T) {
 			}
 
 			var outputBuf, errorOutputBuf bytes.Buffer
-			c := newCommand(t,
+			if err := newCommand(t,
 				cmd.WithArgs(args...),
 				cmd.WithOutput(&outputBuf),
 				cmd.WithErrorOutput(&errorOutputBuf),
 				cmd.WithInput(strings.NewReader(tc.authKey+"\n")),
 				cmd.WithCfgFile(setCfgFile),
 				cmd.WithHomeDir(dir),
-			)
-			if err := c.Execute(); err != nil {
+			).Execute(); err != nil {
 				t.Fatal(err)
 			}
 
@@ -147,14 +146,13 @@ func TestConfigureCmd_overwrite(t *testing.T) {
 		t.Helper()
 
 		var outputBuf bytes.Buffer
-		c := newCommand(t,
+		if err := newCommand(t,
 			cmd.WithCfgFile(cfgFile),
 			cmd.WithHomeDir(dir),
 			cmd.WithArgs("configure"),
 			cmd.WithOutput(&outputBuf),
 			cmd.WithInput(strings.NewReader(authKey+"\n")),
-		)
-		if err := c.Execute(); err != nil {
+		).Execute(); err != nil {
 			t.Fatal(err)
 		}
 

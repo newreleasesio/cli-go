@@ -20,11 +20,10 @@ func TestRootCmdHelp(t *testing.T) {
 		"--help",
 	} {
 		var outputBuf bytes.Buffer
-		c := newCommand(t,
+		if err := newCommand(t,
 			cmd.WithArgs(arg),
 			cmd.WithOutput(&outputBuf),
-		)
-		if err := c.Execute(); err != nil {
+		).Execute(); err != nil {
 			t.Fatal(err)
 		}
 

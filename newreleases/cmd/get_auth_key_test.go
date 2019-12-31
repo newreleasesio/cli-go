@@ -75,7 +75,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 				{Name: "Secondary", Secret: "ne0sg5a9b4qOpc9ty6az8jwn5n16rpymcw71"},
 			}, nil),
 			wantOutputFunc: func(filename string) string {
-				return fmt.Sprintf("Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \n\n|   |   NAME    | AUTHORIZED NETWORKS |\n|---|-----------|---------------------|\n| 1 | Master    |                     |\n| 2 | Secondary |                     |\n\nSelect auth key (enter row number): Using auth key: Master.\nConfiguration saved to: %s.\n", filename)
+				return fmt.Sprintf("Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \n\n    NAME        AUTHORIZED NETWORKS \n1   Master                            \n2   Secondary                         \n\nSelect auth key (enter row number): Using auth key: Master.\nConfiguration saved to: %s.\n", filename)
 			},
 			wantData: "auth-key: z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71\ntimeout: 30s\n",
 		},
@@ -87,7 +87,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 				{Name: "Secondary", Secret: "ne0sg5a9b4qOpc9ty6az8jwn5n16rpymcw71"},
 			}, nil),
 			wantOutputFunc: func(filename string) string {
-				return fmt.Sprintf("Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \n\n|   |   NAME    | AUTHORIZED NETWORKS |\n|---|-----------|---------------------|\n| 1 | Master    |                     |\n| 2 | Secondary |                     |\n\nSelect auth key (enter row number): Using auth key: Secondary.\nConfiguration saved to: %s.\n", filename)
+				return fmt.Sprintf("Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \n\n    NAME        AUTHORIZED NETWORKS \n1   Master                            \n2   Secondary                         \n\nSelect auth key (enter row number): Using auth key: Secondary.\nConfiguration saved to: %s.\n", filename)
 			},
 			wantData: "auth-key: ne0sg5a9b4qOpc9ty6az8jwn5n16rpymcw71\ntimeout: 30s\n",
 		},
@@ -100,7 +100,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 				{Name: "Secondary", Secret: "ne0sg5a9b4qOpc9ty6az8jwn5n16rpymcw71"},
 			}, nil),
 			wantOutputFunc: func(filename string) string {
-				return fmt.Sprintf("Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \n\n|   |   NAME    | AUTHORIZED NETWORKS |\n|---|-----------|---------------------|\n| 1 | Master    |                     |\n| 2 | Secondary |                     |\n\nSelect auth key (enter row number): Using auth key: Secondary.\nConfiguration saved to: %s.\n", filename)
+				return fmt.Sprintf("Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \n\n    NAME        AUTHORIZED NETWORKS \n1   Master                            \n2   Secondary                         \n\nSelect auth key (enter row number): Using auth key: Secondary.\nConfiguration saved to: %s.\n", filename)
 			},
 			wantData: "auth-key: ne0sg5a9b4qOpc9ty6az8jwn5n16rpymcw71\ntimeout: 30s\n",
 		},
@@ -112,7 +112,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 				{Name: "Secondary", Secret: "ne0sg5a9b4qOpc9ty6az8jwn5n16rpymcw71"},
 			}, nil),
 			wantOutputFunc: func(string) string {
-				return "Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \n\n|   |   NAME    | AUTHORIZED NETWORKS |\n|---|-----------|---------------------|\n| 1 | Master    |                     |\n| 2 | Secondary |                     |\n\nSelect auth key (enter row number): Configuration is not saved.\n"
+				return "Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \n\n    NAME        AUTHORIZED NETWORKS \n1   Master                            \n2   Secondary                         \n\nSelect auth key (enter row number): Configuration is not saved.\n"
 			},
 			wantErrorOutput: "No key selected.\n",
 		},
@@ -124,7 +124,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 				{Name: "Secondary", Secret: "ne0sg5a9b4qOpc9ty6az8jwn5n16rpymcw71"},
 			}, nil),
 			wantOutputFunc: func(filename string) string {
-				return fmt.Sprintf("Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \n\n|   |   NAME    | AUTHORIZED NETWORKS |\n|---|-----------|---------------------|\n| 1 | Master    |                     |\n| 2 | Secondary |                     |\n\nSelect auth key (enter row number): Select auth key (enter row number): Using auth key: Master.\nConfiguration saved to: %s.\n", filename)
+				return fmt.Sprintf("Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \n\n    NAME        AUTHORIZED NETWORKS \n1   Master                            \n2   Secondary                         \n\nSelect auth key (enter row number): Select auth key (enter row number): Using auth key: Master.\nConfiguration saved to: %s.\n", filename)
 			},
 			wantErrorOutput: "Invalid row number.\n",
 			wantData:        "auth-key: z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71\ntimeout: 30s\n",
@@ -155,7 +155,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 			}
 
 			var outputBuf, errorOutputBuf bytes.Buffer
-			c := newCommand(t,
+			if err := newCommand(t,
 				cmd.WithCfgFile(setCfgFile),
 				cmd.WithHomeDir(dir),
 				cmd.WithArgs(args...),
@@ -164,8 +164,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 				cmd.WithInput(strings.NewReader(tc.input)),
 				cmd.WithPasswordReader(newMockPasswordReader("myPassword", nil)),
 				cmd.WithAuthKeysGetter(tc.authKeysGetter),
-			)
-			if err := c.Execute(); err != tc.wantError {
+			).Execute(); err != tc.wantError {
 				t.Fatalf("got error %v, want %v", err, tc.wantError)
 			}
 

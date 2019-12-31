@@ -6,15 +6,19 @@
 package cmd_test
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"testing"
+	"time"
 
 	"newreleases.io/cmd/newreleases/cmd"
 )
 
 var homeDir string
+
+var errTest = errors.New("test error")
 
 func TestMain(m *testing.M) {
 	dir, err := ioutil.TempDir("", "newreleases-cmd-")
@@ -37,4 +41,14 @@ func newCommand(t *testing.T, opts ...cmd.Option) (c *cmd.Command) {
 		t.Fatal(err)
 	}
 	return c
+}
+
+func newTime(t *testing.T, s string) (tm time.Time) {
+	t.Helper()
+
+	tm, err := time.Parse(time.RFC3339Nano, s)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return tm
 }

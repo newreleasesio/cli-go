@@ -8,12 +8,19 @@ package cmd
 import "io"
 
 type (
-	Command          = command
-	Option           = option
-	PasswordReader   = passwordReader
-	AuthService      = authService
-	AuthKeysGetter   = authKeysGetter
-	ProvidersService = providersService
+	Command                       = command
+	Option                        = option
+	PasswordReader                = passwordReader
+	AuthKeysGetter                = authKeysGetter
+	AuthService                   = authService
+	ProvidersService              = providersService
+	ReleasesService               = releasesService
+	SlackChannelsService          = slackChannelsService
+	TelegramChatsService          = telegramChatsService
+	DiscordChannelsService        = discordChannelsService
+	HangoutsChatWebhooksService   = hangoutsChatWebhooksService
+	MicrosoftTeamsWebhooksService = microsoftTeamsWebhooksService
+	WebhooksService               = webhooksService
 )
 
 var (
@@ -77,5 +84,47 @@ func WithAuthService(s AuthService) func(c *Command) {
 func WithProvidersService(s ProvidersService) func(c *Command) {
 	return func(c *Command) {
 		c.providersService = s
+	}
+}
+
+func WithReleasesService(s ReleasesService) func(c *Command) {
+	return func(c *Command) {
+		c.releasesService = s
+	}
+}
+
+func WithSlackChannelsService(s SlackChannelsService) func(c *Command) {
+	return func(c *Command) {
+		c.slackChannelsService = s
+	}
+}
+
+func WithTelegramChatsService(s TelegramChatsService) func(c *Command) {
+	return func(c *Command) {
+		c.telegramChatsService = s
+	}
+}
+
+func WithDiscordChannelsService(s DiscordChannelsService) func(c *Command) {
+	return func(c *Command) {
+		c.discordChannelsService = s
+	}
+}
+
+func WithHangoutsChatWebhooksService(s HangoutsChatWebhooksService) func(c *Command) {
+	return func(c *Command) {
+		c.hangoutsChatWebhooksService = s
+	}
+}
+
+func WithMicrosoftTeamsWebhooksService(s MicrosoftTeamsWebhooksService) func(c *Command) {
+	return func(c *Command) {
+		c.microsoftTeamsWebhooksService = s
+	}
+}
+
+func WithWebhooksService(s WebhooksService) func(c *Command) {
+	return func(c *Command) {
+		c.webhooksService = s
 	}
 }

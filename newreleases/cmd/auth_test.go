@@ -8,7 +8,6 @@ package cmd_test
 import (
 	"bytes"
 	"context"
-	"errors"
 	"net"
 	"testing"
 
@@ -26,8 +25,6 @@ func TestAuthCmd(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	errTest := errors.New("test error")
-
 	for _, tc := range []struct {
 		name        string
 		authService cmd.AuthService
@@ -42,7 +39,7 @@ func TestAuthCmd(t *testing.T) {
 		{
 			name:        "single key",
 			authService: newMockAuthService([]newreleases.AuthKey{{Name: "Master", AuthorizedNetworks: []net.IPNet{*ipNet1}}}, nil),
-			wantOutput:  "|   |  NAME  | AUTHORIZED NETWORKS |\n|---|--------|---------------------|\n| 1 | Master | 127.0.0.0/8         |\n",
+			wantOutput:  "NAME     AUTHORIZED NETWORKS   SECRET \nMaster   127.0.0.0/8                    \n",
 		},
 		{
 			name: "two keys",
@@ -50,7 +47,7 @@ func TestAuthCmd(t *testing.T) {
 				{Name: "Master", AuthorizedNetworks: []net.IPNet{*ipNet1}},
 				{Name: "Another", AuthorizedNetworks: []net.IPNet{*ipNet1, *ipNet2}},
 			}, nil),
-			wantOutput: "|   |  NAME   |     AUTHORIZED NETWORKS     |\n|---|---------|-----------------------------|\n| 1 | Master  | 127.0.0.0/8                 |\n| 2 | Another | 127.0.0.0/8, 123.33.44.1/32 |\n",
+			wantOutput: "NAME      AUTHORIZED NETWORKS           SECRET \nMaster    127.0.0.0/8                            \nAnother   127.0.0.0/8, 123.33.44.1/32            \n",
 		},
 		{
 			name:        "error",
@@ -60,12 +57,11 @@ func TestAuthCmd(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			var outputBuf bytes.Buffer
-			c := newCommand(t,
-				cmd.WithArgs("auth", "list"),
+			if err := newCommand(t,
+				cmd.WithArgs("auth"),
 				cmd.WithOutput(&outputBuf),
 				cmd.WithAuthService(tc.authService),
-			)
-			if err := c.Execute(); err != tc.wantError {
+			).Execute(); err != tc.wantError {
 				t.Fatalf("got error %v, want %v", err, tc.wantError)
 			}
 
