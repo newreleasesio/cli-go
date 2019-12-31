@@ -204,14 +204,12 @@ func printReleasesTable(cmd *cobra.Command, releases []newreleases.Release) {
 }
 
 func printReleaseTable(cmd *cobra.Command, r *newreleases.Release) {
-	table := newTable(cmd.OutOrStdout())
-	table.Append([]string{"Version:", r.Version})
-	table.Append([]string{"Date:", r.Date.Local().String()})
-	table.Append([]string{"Pre-Release:", yesNo(r.IsPrerelease)})
-	table.Append([]string{"Has Note:", yesNo(r.HasNote)})
-	table.Append([]string{"Updated:", yesNo(r.IsUpdated)})
-	table.Append([]string{"Excluded:", yesNo(r.IsExcluded)})
-	table.Render()
+	cmd.Println("Version:      ", r.Version)
+	cmd.Println("Date:         ", r.Date.Local().String())
+	cmd.Println("Pre-Release:  ", yesNo(r.IsPrerelease))
+	cmd.Println("Has Note:     ", yesNo(r.HasNote))
+	cmd.Println("Updated:      ", yesNo(r.IsUpdated))
+	cmd.Println("Excluded:     ", yesNo(r.IsExcluded))
 }
 
 func printReleaseNote(cmd *cobra.Command, n *newreleases.ReleaseNote) {

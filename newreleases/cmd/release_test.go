@@ -9,6 +9,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"strings"
 	"testing"
 
 	"newreleases.io/cmd/newreleases/cmd"
@@ -52,7 +53,9 @@ func TestReleaseCmd_List(t *testing.T) {
 				{Version: "v1.18.88", Date: newTime(t, "2019-08-11T19:57:01Z"), IsExcluded: true},
 			}, nil, 1, nil),
 			wantOutputFunc: func() string {
-				return fmt.Sprintf("VERSION    DATE                             PRE-RELEASE   HAS NOTE   UPDATED   EXCLUDED \nv1.25.0    %s   no            no         no        no         \nv1.21.6    %s   yes           no         no        no         \nv1.21.5    %s   no            yes        no        no         \nv1.20.0    %s   no            no         yes       no         \nv1.18.88   %s   no            no         no        yes        \n",
+				dateHeaderSep := strings.Repeat(" ", len(newTime(t, "2019-10-22T01:45:55Z").Local().String())-1)
+				return fmt.Sprintf("VERSION    DATE%sPRE-RELEASE   HAS NOTE   UPDATED   EXCLUDED \nv1.25.0    %s   no            no         no        no         \nv1.21.6    %s   yes           no         no        no         \nv1.21.5    %s   no            yes        no        no         \nv1.20.0    %s   no            no         yes       no         \nv1.18.88   %s   no            no         no        yes        \n",
+					dateHeaderSep,
 					newTime(t, "2019-10-22T01:45:55Z").Local(),
 					newTime(t, "2019-09-21T11:25:00Z").Local(),
 					newTime(t, "2019-09-20T01:03:00Z").Local(),
@@ -108,7 +111,7 @@ func TestReleaseCmd_Get(t *testing.T) {
 				{Version: "v0.1.0", Date: newTime(t, "2019-10-22T01:45:55Z")},
 			}, nil, 1, nil),
 			wantOutputFunc: func() string {
-				return fmt.Sprintf("Version:       v0.1.0                           \nDate:          %s   \nPre-Release:   no                               \nHas Note:      no                               \nUpdated:       no                               \nExcluded:      no                               \n",
+				return fmt.Sprintf("Version:       v0.1.0\nDate:          %s\nPre-Release:   no\nHas Note:      no\nUpdated:       no\nExcluded:      no\n",
 					newTime(t, "2019-10-22T01:45:55Z").Local(),
 				)
 			},
