@@ -21,6 +21,7 @@ func (c *command) initGetAuthKeyCmd() (err error) {
 	getAuthKeyCmd := &cobra.Command{
 		Use:   "get-auth-key",
 		Short: "Get API auth key and store it in the configuration",
+		Long:  configurationHelp,
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			cmd.Println("Sign in to NewReleases with your credentials")
 			cmd.Println("to get available API keys and store them in local configuration file.")

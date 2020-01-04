@@ -14,6 +14,7 @@ type (
 	AuthKeysGetter                = authKeysGetter
 	AuthService                   = authService
 	ProvidersService              = providersService
+	ProjectsService               = projectsService
 	ReleasesService               = releasesService
 	SlackChannelsService          = slackChannelsService
 	TelegramChatsService          = telegramChatsService
@@ -84,6 +85,12 @@ func WithAuthService(s AuthService) func(c *Command) {
 func WithProvidersService(s ProvidersService) func(c *Command) {
 	return func(c *Command) {
 		c.providersService = s
+	}
+}
+
+func WithProjectsService(s ProjectsService) func(c *Command) {
+	return func(c *Command) {
+		c.projectsService = s
 	}
 }
 

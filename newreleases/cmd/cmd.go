@@ -24,6 +24,10 @@ const (
 	optionNameAPIEndpoint = "api-endpoint"
 )
 
+func init() {
+	cobra.EnableCommandSorting = false
+}
+
 type command struct {
 	root                          *cobra.Command
 	config                        *viper.Viper
@@ -33,6 +37,7 @@ type command struct {
 	passwordReader                passwordReader
 	authKeysGetter                authKeysGetter
 	authService                   authService
+	projectsService               projectsService
 	releasesService               releasesService
 	providersService              providersService
 	slackChannelsService          slackChannelsService
@@ -48,8 +53,11 @@ type option func(*command)
 func newCommand(opts ...option) (c *command, err error) {
 	c = &command{
 		root: &cobra.Command{
-			Use:           "newreleases",
-			Short:         "Release tracker for software engineers",
+			Use:   "newreleases",
+			Short: "newreleases manages projects on NewReleases service",
+			Long: `NewReleases is a release tracker for software engineers.
+
+More information at https://newreleases.io.`,
 			SilenceErrors: true,
 			SilenceUsage:  true,
 		},
@@ -67,15 +75,16 @@ func newCommand(opts ...option) (c *command, err error) {
 		return nil, err
 	}
 
-	if err := c.initAuthCmd(); err != nil {
-		return nil, err
-	}
-	if err := c.initProviderCmd(); err != nil {
+	if err := c.initProjectCmd(); err != nil {
 		return nil, err
 	}
 	if err := c.initReleaseCmd(); err != nil {
 		return nil, err
 	}
+	if err := c.initProviderCmd(); err != nil {
+		return nil, err
+	}
+
 	if err := c.initSlackCmd(); err != nil {
 		return nil, err
 	}
@@ -97,6 +106,9 @@ func newCommand(opts ...option) (c *command, err error) {
 
 	c.initConfigureCmd()
 	if err := c.initGetAuthKeyCmd(); err != nil {
+		return nil, err
+	}
+	if err := c.initAuthCmd(); err != nil {
 		return nil, err
 	}
 	c.initVersionCmd()

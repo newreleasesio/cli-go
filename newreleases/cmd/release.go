@@ -38,7 +38,7 @@ func (c *command) initReleaseListCmd(releaseCmd *cobra.Command) (err error) {
 	optionNamePage := "page"
 
 	cmd := &cobra.Command{
-		Use:   "list [provider project_name] | [project_id]",
+		Use:   "list [PROVIDER PROJECT_NAME] | [PROJECT_ID]",
 		Short: "Get project releases",
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			ctx, cancel := newClientContext(c.config)
@@ -83,7 +83,7 @@ func (c *command) initReleaseListCmd(releaseCmd *cobra.Command) (err error) {
 		PreRunE: c.setReleasesService,
 	}
 
-	cmd.Flags().Int(optionNamePage, 1, "page number")
+	cmd.Flags().IntP(optionNamePage, "p", 1, "page number")
 
 	if err := addClientFlags(cmd, c.config); err != nil {
 		return err
@@ -119,7 +119,7 @@ func (c *command) initReleaseGetCmd(releaseCmd *cobra.Command) (err error) {
 				return nil
 			}
 
-			printReleaseTable(cmd, release)
+			printRelease(cmd, release)
 			return nil
 		},
 		PreRunE: c.setReleasesService,
@@ -135,7 +135,7 @@ func (c *command) initReleaseGetCmd(releaseCmd *cobra.Command) (err error) {
 
 func (c *command) initReleaseNoteCmd(releaseCmd *cobra.Command) (err error) {
 	cmd := &cobra.Command{
-		Use:   "note [provider project_name] | [project_id] version",
+		Use:   "note [PROVIDER PROJECT_NAME] | [PROJECT_ID] version",
 		Short: "Get a project release note",
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			ctx, cancel := newClientContext(c.config)
@@ -203,13 +203,24 @@ func printReleasesTable(cmd *cobra.Command, releases []newreleases.Release) {
 	table.Render()
 }
 
-func printReleaseTable(cmd *cobra.Command, r *newreleases.Release) {
-	cmd.Println("Version:      ", r.Version)
-	cmd.Println("Date:         ", r.Date.Local().String())
-	cmd.Println("Pre-Release:  ", yesNo(r.IsPrerelease))
-	cmd.Println("Has Note:     ", yesNo(r.HasNote))
-	cmd.Println("Updated:      ", yesNo(r.IsUpdated))
-	cmd.Println("Excluded:     ", yesNo(r.IsExcluded))
+func printRelease(cmd *cobra.Command, r *newreleases.Release) {
+	table := newTable(cmd.OutOrStdout())
+	table.Append([]string{"Version:", r.Version})
+	table.Append([]string{"Date:", r.Date.Local().String()})
+
+	if r.IsPrerelease {
+		table.Append([]string{"Pre-Release:", "yes"})
+	}
+	if r.HasNote {
+		table.Append([]string{"Has Note:", "yes"})
+	}
+	if r.IsUpdated {
+		table.Append([]string{"Updated:", "yes"})
+	}
+	if r.IsExcluded {
+		table.Append([]string{"Excluded:", "yes"})
+	}
+	table.Render()
 }
 
 func printReleaseNote(cmd *cobra.Command, n *newreleases.ReleaseNote) {

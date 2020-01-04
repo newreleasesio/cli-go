@@ -23,6 +23,8 @@ func (c *command) getClient(cmd *cobra.Command) (client *newreleases.Client, err
 
 	authKey := c.config.GetString(optionNameAuthKey)
 	if authKey == "" {
+		cmd.Println(configurationHelp)
+		cmd.Println()
 		return nil, errors.New("auth key not configured")
 	}
 	o, err := newClientOptions(cmd)

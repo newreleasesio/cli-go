@@ -15,6 +15,7 @@ func (c *command) initConfigureCmd() {
 	c.root.AddCommand(&cobra.Command{
 		Use:   "configure",
 		Short: "Provide configuration values to be stored in a file",
+		Long:  configurationHelp,
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			reader := bufio.NewReader(cmd.InOrStdin())
 

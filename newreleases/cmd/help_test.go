@@ -27,7 +27,7 @@ func TestRootCmdHelp(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		want := "Release tracker for software engineers"
+		want := "NewReleases is a release tracker for software engineers"
 		got := outputBuf.String()
 		if !strings.Contains(got, want) {
 			t.Errorf("output %q for arg %q, does not contain %q", got, arg, want)

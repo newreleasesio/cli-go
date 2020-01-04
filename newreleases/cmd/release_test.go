@@ -111,8 +111,28 @@ func TestReleaseCmd_Get(t *testing.T) {
 				{Version: "v0.1.0", Date: newTime(t, "2019-10-22T01:45:55Z")},
 			}, nil, 1, nil),
 			wantOutputFunc: func() string {
-				return fmt.Sprintf("Version:       v0.1.0\nDate:          %s\nPre-Release:   no\nHas Note:      no\nUpdated:       no\nExcluded:      no\n",
+				dateLen := len(newTime(t, "2019-10-22T01:45:55Z").Local().String())
+				return fmt.Sprintf("Version:   v0.1.0%s   \nDate:      %s   \n",
+					strings.Repeat(" ", dateLen-6),
 					newTime(t, "2019-10-22T01:45:55Z").Local(),
+				)
+			},
+		},
+		{
+			name: "release with optional flags",
+			args: []string{"github", "golang/go", "v0.1.0"},
+			releasesService: newMockReleasesService([]newreleases.Release{
+				{Version: "v0.1.0", Date: newTime(t, "2019-10-22T01:45:55Z"), IsPrerelease: true, HasNote: true, IsUpdated: true, IsExcluded: true},
+			}, nil, 1, nil),
+			wantOutputFunc: func() string {
+				dateLen := len(newTime(t, "2019-10-22T01:45:55Z").Local().String())
+				return fmt.Sprintf("Version:       v0.1.0%s   \nDate:          %s   \nPre-Release:   yes%s   \nHas Note:      yes%s   \nUpdated:       yes%s   \nExcluded:      yes%s   \n",
+					strings.Repeat(" ", dateLen-6),
+					newTime(t, "2019-10-22T01:45:55Z").Local(),
+					strings.Repeat(" ", dateLen-3),
+					strings.Repeat(" ", dateLen-3),
+					strings.Repeat(" ", dateLen-3),
+					strings.Repeat(" ", dateLen-3),
 				)
 			},
 		},
