@@ -236,13 +236,13 @@ newreleases release note gzetyksdfeyxt4mdsbe60td5gw 2.6.11
 NewReleases supports a number of clients and they can be listed with:
 
 ```sh
-newreleases provider
+newreleases providers
 ```
 
 To list only providers that you have project added from:
 
 ```sh
-newreleases provider --added
+newreleases providers --added
 ```
 
 This information can be useful when filtering projects by a provider.

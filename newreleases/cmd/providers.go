@@ -15,8 +15,9 @@ func (c *command) initProviderCmd() (err error) {
 	optionNameAdded := "added"
 
 	cmd := &cobra.Command{
-		Use:   "provider",
-		Short: "Get project providers",
+		Use:     "providers",
+		Aliases: []string{"provider"},
+		Short:   "Get project providers",
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			ctx, cancel := newClientContext(c.config)
 			defer cancel()

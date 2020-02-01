@@ -50,22 +50,24 @@ func TestProviderCmd(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			args := []string{"provider"}
-			if tc.added {
-				args = append(args, "--added")
-			}
-			var outputBuf bytes.Buffer
-			if err := newCommand(t,
-				cmd.WithArgs(args...),
-				cmd.WithOutput(&outputBuf),
-				cmd.WithProvidersService(tc.providersService),
-			).Execute(); err != tc.wantError {
-				t.Fatalf("got error %v, want %v", err, tc.wantError)
-			}
+			for _, alias := range []string{"providers", "provider"} {
+				args := []string{alias}
+				if tc.added {
+					args = append(args, "--added")
+				}
+				var outputBuf bytes.Buffer
+				if err := newCommand(t,
+					cmd.WithArgs(args...),
+					cmd.WithOutput(&outputBuf),
+					cmd.WithProvidersService(tc.providersService),
+				).Execute(); err != tc.wantError {
+					t.Fatalf("got error %v, want %v", err, tc.wantError)
+				}
 
-			gotOutput := outputBuf.String()
-			if gotOutput != tc.wantOutput {
-				t.Errorf("got output %q, want %q", gotOutput, tc.wantOutput)
+				gotOutput := outputBuf.String()
+				if gotOutput != tc.wantOutput {
+					t.Errorf("got output %q, want %q", gotOutput, tc.wantOutput)
+				}
 			}
 		})
 	}
