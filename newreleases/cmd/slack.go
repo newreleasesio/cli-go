@@ -34,11 +34,12 @@ func (c *command) initSlackCmd() (err error) {
 
 			return nil
 		},
-		PreRunE: c.setSlackChannelsService,
-	}
-
-	if err := addClientFlags(cmd, c.config); err != nil {
-		return err
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := addClientFlags(cmd, c.config); err != nil {
+				return err
+			}
+			return c.setSlackChannelsService(cmd, args)
+		},
 	}
 
 	c.root.AddCommand(cmd)

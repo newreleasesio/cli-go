@@ -45,14 +45,15 @@ func (c *command) initProjectSearchCmd(projectCmd *cobra.Command) (err error) {
 			printProjectsTable(cmd, projects)
 			return nil
 		},
-		PreRunE: c.setProjectsService,
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := addClientFlags(cmd, c.config); err != nil {
+				return err
+			}
+			return c.setProjectsService(cmd, args)
+		},
 	}
 
 	cmd.Flags().String(optionNameProvider, "", "filter by provider")
-
-	if err := addClientFlags(cmd, c.config); err != nil {
-		return err
-	}
 
 	projectCmd.AddCommand(cmd)
 	return nil

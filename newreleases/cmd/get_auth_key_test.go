@@ -23,6 +23,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 	for _, tc := range []struct {
 		name            string
 		withConfigFlag  bool
+		newConfig       bool
 		input           string
 		authKeysGetter  cmd.AuthKeysGetter
 		wantOutputFunc  func(filename string) string
@@ -58,7 +59,18 @@ func TestGetAuthKeyCmd(t *testing.T) {
 			wantData: "auth-key: z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71\ntimeout: 30s\n",
 		},
 		{
-			name:           "single key with config flag",
+			name:           "single key with new config flag",
+			withConfigFlag: true,
+			newConfig:      true,
+			input:          "me@newreleases.io\n",
+			authKeysGetter: newMockAuthKeysGetter("me@newreleases.io", "myPassword", []newreleases.AuthKey{{Name: "Master", Secret: "z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71"}}, nil),
+			wantOutputFunc: func(filename string) string {
+				return fmt.Sprintf("Sign in to NewReleases with your credentials\nto get available API keys and store them in local configuration file.\nEmail: Password: \nUsing auth key: Master.\nConfiguration saved to: %s.\n", filename)
+			},
+			wantData: "auth-key: z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71\ntimeout: 30s\n",
+		},
+		{
+			name:           "single key with existing config flag",
 			withConfigFlag: true,
 			input:          "me@newreleases.io\n",
 			authKeysGetter: newMockAuthKeysGetter("me@newreleases.io", "myPassword", []newreleases.AuthKey{{Name: "Master", Secret: "z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71"}}, nil),
@@ -138,12 +150,14 @@ func TestGetAuthKeyCmd(t *testing.T) {
 			defer os.RemoveAll(dir)
 
 			cfgFile := filepath.Join(dir, ".newreleases.yaml")
-			f, err := os.Create(cfgFile)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if err := f.Close(); err != nil {
-				t.Fatal(err)
+			if !tc.newConfig {
+				f, err := os.Create(cfgFile)
+				if err != nil {
+					t.Fatal(err)
+				}
+				if err := f.Close(); err != nil {
+					t.Fatal(err)
+				}
 			}
 
 			args := []string{"get-auth-key"}

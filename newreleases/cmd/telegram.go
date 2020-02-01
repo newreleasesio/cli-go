@@ -34,11 +34,12 @@ func (c *command) initTelegramCmd() (err error) {
 
 			return nil
 		},
-		PreRunE: c.setTelegramChatsService,
-	}
-
-	if err := addClientFlags(cmd, c.config); err != nil {
-		return err
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := addClientFlags(cmd, c.config); err != nil {
+				return err
+			}
+			return c.setTelegramChatsService(cmd, args)
+		},
 	}
 
 	c.root.AddCommand(cmd)

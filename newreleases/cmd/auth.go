@@ -35,11 +35,12 @@ func (c *command) initAuthCmd() (err error) {
 
 			return nil
 		},
-		PreRunE: c.setAuthService,
-	}
-
-	if err := addClientFlags(cmd, c.config); err != nil {
-		return err
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := addClientFlags(cmd, c.config); err != nil {
+				return err
+			}
+			return c.setAuthService(cmd, args)
+		},
 	}
 
 	c.root.AddCommand(cmd)

@@ -8,6 +8,7 @@ package cmd
 import (
 	"errors"
 	"io"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -60,6 +61,10 @@ func newCommand(opts ...option) (c *command, err error) {
 More information at https://newreleases.io.`,
 			SilenceErrors: true,
 			SilenceUsage:  true,
+			PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+				cmdName := cmd.Name()
+				return c.initConfig(cmdName != cmdNameConfigure && cmdName != cmdNameGetAuthKey)
+			},
 		},
 	}
 
@@ -71,9 +76,6 @@ More information at https://newreleases.io.`,
 	}
 
 	c.initGlobalFlags()
-	if err := c.initConfig(); err != nil {
-		return nil, err
-	}
 
 	if err := c.initProjectCmd(); err != nil {
 		return nil, err
@@ -133,7 +135,7 @@ func (c *command) initGlobalFlags() {
 	globalFlags.StringVar(&c.cfgFile, "config", "", "config file (default is $HOME/.newreleases.yaml)")
 }
 
-func (c *command) initConfig() (err error) {
+func (c *command) initConfig(requireConfigFileIfSet bool) (err error) {
 	config := viper.New()
 	configName := ".newreleases"
 	if c.cfgFile != "" {
@@ -147,6 +149,7 @@ func (c *command) initConfig() (err error) {
 		// Search config in home directory with name ".newreleases" (without extension).
 		config.AddConfigPath(c.homeDir)
 		config.SetConfigName(configName)
+		requireConfigFileIfSet = false
 	}
 
 	// Environment
@@ -160,8 +163,11 @@ func (c *command) initConfig() (err error) {
 
 	// If a config file is found, read it in.
 	if err := config.ReadInConfig(); err != nil {
+		if requireConfigFileIfSet {
+			return err
+		}
 		var e viper.ConfigFileNotFoundError
-		if !errors.As(err, &e) {
+		if !errors.As(err, &e) && !os.IsNotExist(err) {
 			return err
 		}
 	}

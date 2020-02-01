@@ -17,9 +17,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const cmdNameGetAuthKey = "get-auth-key"
+
 func (c *command) initGetAuthKeyCmd() (err error) {
 	getAuthKeyCmd := &cobra.Command{
-		Use:   "get-auth-key",
+		Use:   cmdNameGetAuthKey,
 		Short: "Get API auth key and store it in the configuration",
 		Long:  configurationHelp,
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -93,11 +95,12 @@ func (c *command) initGetAuthKeyCmd() (err error) {
 			cmd.Printf("Configuration saved to: %s.\n", c.cfgFile)
 			return nil
 		},
-		PreRunE: c.setAuthKeysGetter,
-	}
-
-	if err := addClientFlags(getAuthKeyCmd, c.config); err != nil {
-		return err
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := addClientFlags(cmd, c.config); err != nil {
+				return err
+			}
+			return c.setAuthKeysGetter(cmd, args)
+		},
 	}
 
 	c.root.AddCommand(getAuthKeyCmd)

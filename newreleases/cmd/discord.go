@@ -34,11 +34,12 @@ func (c *command) initDiscordCmd() (err error) {
 
 			return nil
 		},
-		PreRunE: c.setDiscordChannelsService,
-	}
-
-	if err := addClientFlags(cmd, c.config); err != nil {
-		return err
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := addClientFlags(cmd, c.config); err != nil {
+				return err
+			}
+			return c.setDiscordChannelsService(cmd, args)
+		},
 	}
 
 	c.root.AddCommand(cmd)

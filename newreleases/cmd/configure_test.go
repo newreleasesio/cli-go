@@ -21,6 +21,7 @@ func TestConfigureCmd(t *testing.T) {
 	for _, tc := range []struct {
 		name            string
 		withConfigFlag  bool
+		newConfig       bool
 		authKey         string
 		wantOutputFunc  func(filename string) string
 		wantErrorOutput string
@@ -43,16 +44,26 @@ func TestConfigureCmd(t *testing.T) {
 			wantOutputFunc: func(filename string) string {
 				return fmt.Sprintf("Auth Key: Configuration saved to: %s.\n", filename)
 			},
-			wantData: "auth-key: z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71\ntimeout: 30s\n",
+			wantData: "auth-key: z8jwn5ne0sg5a9b4qOpc9ty6an16rpymcw71\n",
 		},
 		{
-			name:           "valid key with config flag",
+			name:           "valid key with new config flag",
+			withConfigFlag: true,
+			newConfig:      true,
+			authKey:        "9ty6an1z8jwn5ne0sg5a9b4qOpc6rpymcw71",
+			wantOutputFunc: func(filename string) string {
+				return fmt.Sprintf("Auth Key: Configuration saved to: %s.\n", filename)
+			},
+			wantData: "auth-key: 9ty6an1z8jwn5ne0sg5a9b4qOpc6rpymcw71\n",
+		},
+		{
+			name:           "valid key with existing config flag",
 			withConfigFlag: true,
 			authKey:        "9ty6an1z8jwn5ne0sg5a9b4qOpc6rpymcw71",
 			wantOutputFunc: func(filename string) string {
 				return fmt.Sprintf("Auth Key: Configuration saved to: %s.\n", filename)
 			},
-			wantData: "auth-key: 9ty6an1z8jwn5ne0sg5a9b4qOpc6rpymcw71\ntimeout: 30s\n",
+			wantData: "auth-key: 9ty6an1z8jwn5ne0sg5a9b4qOpc6rpymcw71\n",
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -63,12 +74,14 @@ func TestConfigureCmd(t *testing.T) {
 			defer os.RemoveAll(dir)
 
 			cfgFile := filepath.Join(dir, ".newreleases.yaml")
-			f, err := os.Create(cfgFile)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if err := f.Close(); err != nil {
-				t.Fatal(err)
+			if !tc.newConfig {
+				f, err := os.Create(cfgFile)
+				if err != nil {
+					t.Fatal(err)
+				}
+				if err := f.Close(); err != nil {
+					t.Fatal(err)
+				}
 			}
 
 			args := []string{"configure"}
@@ -166,7 +179,7 @@ func TestConfigureCmd_overwrite(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		wantData := fmt.Sprintf("auth-key: %s\ntimeout: 30s\n", authKey)
+		wantData := fmt.Sprintf("auth-key: %s\n", authKey)
 		if string(gotData) != wantData {
 			t.Errorf("got config file data %q, want %q", string(gotData), wantData)
 		}

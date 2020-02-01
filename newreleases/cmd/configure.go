@@ -11,9 +11,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const cmdNameConfigure = "configure"
+
 func (c *command) initConfigureCmd() {
 	c.root.AddCommand(&cobra.Command{
-		Use:   "configure",
+		Use:   cmdNameConfigure,
 		Short: "Provide configuration values to be stored in a file",
 		Long:  configurationHelp,
 		RunE: func(cmd *cobra.Command, args []string) (err error) {

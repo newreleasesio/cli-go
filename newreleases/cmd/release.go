@@ -80,14 +80,15 @@ func (c *command) initReleaseListCmd(releaseCmd *cobra.Command) (err error) {
 
 			return nil
 		},
-		PreRunE: c.setReleasesService,
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := addClientFlags(cmd, c.config); err != nil {
+				return err
+			}
+			return c.setReleasesService(cmd, args)
+		},
 	}
 
 	cmd.Flags().IntP(optionNamePage, "p", 1, "page number")
-
-	if err := addClientFlags(cmd, c.config); err != nil {
-		return err
-	}
 
 	releaseCmd.AddCommand(cmd)
 	return nil
@@ -122,11 +123,12 @@ func (c *command) initReleaseGetCmd(releaseCmd *cobra.Command) (err error) {
 			printRelease(cmd, release)
 			return nil
 		},
-		PreRunE: c.setReleasesService,
-	}
-
-	if err := addClientFlags(cmd, c.config); err != nil {
-		return err
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := addClientFlags(cmd, c.config); err != nil {
+				return err
+			}
+			return c.setReleasesService(cmd, args)
+		},
 	}
 
 	releaseCmd.AddCommand(cmd)
@@ -162,11 +164,12 @@ func (c *command) initReleaseNoteCmd(releaseCmd *cobra.Command) (err error) {
 			printReleaseNote(cmd, releaseNote)
 			return nil
 		},
-		PreRunE: c.setReleasesService,
-	}
-
-	if err := addClientFlags(cmd, c.config); err != nil {
-		return err
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := addClientFlags(cmd, c.config); err != nil {
+				return err
+			}
+			return c.setReleasesService(cmd, args)
+		},
 	}
 
 	releaseCmd.AddCommand(cmd)

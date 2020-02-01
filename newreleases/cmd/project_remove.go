@@ -34,11 +34,12 @@ func (c *command) initProjectRemoveCmd(projectCmd *cobra.Command) (err error) {
 
 			return err
 		},
-		PreRunE: c.setProjectsService,
-	}
-
-	if err := addClientFlags(cmd, c.config); err != nil {
-		return err
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := addClientFlags(cmd, c.config); err != nil {
+				return err
+			}
+			return c.setProjectsService(cmd, args)
+		},
 	}
 
 	projectCmd.AddCommand(cmd)

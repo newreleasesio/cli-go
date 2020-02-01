@@ -110,7 +110,12 @@ func (c *command) initProjectAddCmd(projectCmd *cobra.Command) (err error) {
 			printProject(cmd, project)
 			return nil
 		},
-		PreRunE: c.setProjectsService,
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := addClientFlags(cmd, c.config); err != nil {
+				return err
+			}
+			return c.setProjectsService(cmd, args)
+		},
 	}
 
 	cmd.Flags().String(optionNameEmail, "none", "frequency of email notifications: hourly, daily, weekly, none")
@@ -123,10 +128,6 @@ func (c *command) initProjectAddCmd(projectCmd *cobra.Command) (err error) {
 	cmd.Flags().StringArray(optionNameExclusions, nil, "Regex version exclusion, suffix with \"-inverse\" for inclusion")
 	cmd.Flags().Bool(optionNameExcludePrereleases, false, "exclude pre-repelases")
 	cmd.Flags().Bool(optionNameExcludeUpdated, false, "exclude updated")
-
-	if err := addClientFlags(cmd, c.config); err != nil {
-		return err
-	}
 
 	projectCmd.AddCommand(cmd)
 	return nil
