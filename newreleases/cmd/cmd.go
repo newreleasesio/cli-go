@@ -12,7 +12,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/mitchellh/go-homedir"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -179,7 +178,7 @@ func (c *command) setHomeDir() (err error) {
 	if c.homeDir != "" {
 		return
 	}
-	dir, err := homedir.Dir()
+	dir, err := os.UserHomeDir()
 	if err != nil {
 		return err
 	}
