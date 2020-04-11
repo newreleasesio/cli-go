@@ -35,7 +35,7 @@ func (c *command) initTelegramCmd() (err error) {
 			return nil
 		},
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if err := addClientFlags(cmd, c.config); err != nil {
+			if err := addClientConfigOptions(cmd, c.config); err != nil {
 				return err
 			}
 			return c.setTelegramChatsService(cmd, args)
@@ -43,7 +43,7 @@ func (c *command) initTelegramCmd() (err error) {
 	}
 
 	c.root.AddCommand(cmd)
-	return nil
+	return addClientFlags(cmd)
 }
 
 func (c *command) setTelegramChatsService(cmd *cobra.Command, args []string) (err error) {

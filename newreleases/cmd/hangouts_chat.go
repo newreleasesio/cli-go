@@ -35,7 +35,7 @@ func (c *command) initHangoutsChatCmd() (err error) {
 			return nil
 		},
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if err := addClientFlags(cmd, c.config); err != nil {
+			if err := addClientConfigOptions(cmd, c.config); err != nil {
 				return err
 			}
 			return c.setHangoutsChatWebhooksService(cmd, args)
@@ -43,7 +43,7 @@ func (c *command) initHangoutsChatCmd() (err error) {
 	}
 
 	c.root.AddCommand(cmd)
-	return nil
+	return addClientFlags(cmd)
 }
 
 func (c *command) setHangoutsChatWebhooksService(cmd *cobra.Command, args []string) (err error) {

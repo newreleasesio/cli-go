@@ -96,7 +96,7 @@ func (c *command) initGetAuthKeyCmd() (err error) {
 			return nil
 		},
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if err := addClientFlags(cmd, c.config); err != nil {
+			if err := addClientConfigOptions(cmd, c.config); err != nil {
 				return err
 			}
 			return c.setAuthKeysGetter(cmd, args)
@@ -104,7 +104,7 @@ func (c *command) initGetAuthKeyCmd() (err error) {
 	}
 
 	c.root.AddCommand(getAuthKeyCmd)
-	return nil
+	return addClientFlags(getAuthKeyCmd)
 }
 
 func (c *command) setAuthKeysGetter(cmd *cobra.Command, args []string) (err error) {

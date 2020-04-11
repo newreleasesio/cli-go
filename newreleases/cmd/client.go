@@ -54,7 +54,7 @@ func newClientContext(config *viper.Viper) (ctx context.Context, cancel context.
 	return context.WithTimeout(context.Background(), config.GetDuration(optionNameTimeout))
 }
 
-func addClientFlags(cmd *cobra.Command, config *viper.Viper) (err error) {
+func addClientFlags(cmd *cobra.Command) (err error) {
 	flags := cmd.Flags()
 	flags.String(optionNameAuthKey, "", "API auth key")
 	flags.Duration(optionNameTimeout, 30*time.Second, "API request timeout")
@@ -62,7 +62,11 @@ func addClientFlags(cmd *cobra.Command, config *viper.Viper) (err error) {
 	if err := flags.MarkHidden(optionNameAPIEndpoint); err != nil {
 		return err
 	}
+	return nil
+}
 
+func addClientConfigOptions(cmd *cobra.Command, config *viper.Viper) (err error) {
+	flags := cmd.Flags()
 	if err := config.BindPFlag(optionNameAuthKey, flags.Lookup(optionNameAuthKey)); err != nil {
 		return err
 	}

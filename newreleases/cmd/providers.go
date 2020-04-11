@@ -47,7 +47,7 @@ func (c *command) initProviderCmd() (err error) {
 			return nil
 		},
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if err := addClientFlags(cmd, c.config); err != nil {
+			if err := addClientConfigOptions(cmd, c.config); err != nil {
 				return err
 			}
 			return c.setProvidersService(cmd, args)
@@ -57,7 +57,7 @@ func (c *command) initProviderCmd() (err error) {
 	cmd.Flags().Bool(optionNameAdded, false, "get only providers for projects that are added for tracking")
 
 	c.root.AddCommand(cmd)
-	return nil
+	return addClientFlags(cmd)
 }
 
 func (c *command) setProvidersService(cmd *cobra.Command, args []string) (err error) {
