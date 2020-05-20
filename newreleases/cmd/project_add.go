@@ -126,7 +126,7 @@ func (c *command) initProjectAddCmd(projectCmd *cobra.Command) (err error) {
 	cmd.Flags().StringArray(optionNameMicrosoftTeams, nil, "Microsoft Teams webhook ID")
 	cmd.Flags().StringArray(optionNameWebhook, nil, "Webhook ID")
 	cmd.Flags().StringArray(optionNameExclusions, nil, "Regex version exclusion, suffix with \"-inverse\" for inclusion")
-	cmd.Flags().Bool(optionNameExcludePrereleases, false, "exclude pre-repelases")
+	cmd.Flags().Bool(optionNameExcludePrereleases, false, "exclude pre-releases")
 	cmd.Flags().Bool(optionNameExcludeUpdated, false, "exclude updated")
 
 	projectCmd.AddCommand(cmd)
