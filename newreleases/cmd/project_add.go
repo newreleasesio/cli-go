@@ -118,7 +118,7 @@ func (c *command) initProjectAddCmd(projectCmd *cobra.Command) (err error) {
 		},
 	}
 
-	cmd.Flags().String(optionNameEmail, "none", "frequency of email notifications: hourly, daily, weekly, none")
+	cmd.Flags().String(optionNameEmail, "none", "frequency of email notifications: instant, hourly, daily, weekly, none")
 	cmd.Flags().StringArray(optionNameSlack, nil, "Slack channel ID")
 	cmd.Flags().StringArray(optionNameTelegram, nil, "Telegram chat ID")
 	cmd.Flags().StringArray(optionNameDiscord, nil, "Discord channel ID")
