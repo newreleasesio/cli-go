@@ -54,7 +54,7 @@ func TestReleaseCmd_List(t *testing.T) {
 			}, nil, 1, nil),
 			wantOutputFunc: func() string {
 				dateHeaderSep := strings.Repeat(" ", len(newTime(t, "2019-10-22T01:45:55Z").Local().String())-1)
-				return fmt.Sprintf("VERSION    DATE%sPRE-RELEASE   HAS NOTE   UPDATED   EXCLUDED \nv1.25.0    %s   no            no         no        no         \nv1.21.6    %s   yes           no         no        no         \nv1.21.5    %s   no            yes        no        no         \nv1.20.0    %s   no            no         yes       no         \nv1.18.88   %s   no            no         no        yes        \n",
+				return fmt.Sprintf("VERSION    DATE%sPRE-RELEASE   HAS NOTE   UPDATED   EXCLUDED   CVE \nv1.25.0    %s   no            no         no        no         no    \nv1.21.6    %s   yes           no         no        no         no    \nv1.21.5    %s   no            yes        no        no         no    \nv1.20.0    %s   no            no         yes       no         no    \nv1.18.88   %s   no            no         no        yes        no    \n",
 					dateHeaderSep,
 					newTime(t, "2019-10-22T01:45:55Z").Local(),
 					newTime(t, "2019-09-21T11:25:00Z").Local(),

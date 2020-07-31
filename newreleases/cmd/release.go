@@ -199,9 +199,9 @@ type releasesService interface {
 
 func printReleasesTable(cmd *cobra.Command, releases []newreleases.Release) {
 	table := newTable(cmd.OutOrStdout())
-	table.SetHeader([]string{"Version", "Date", "Pre-Release", "Has Note", "Updated", "Excluded"})
+	table.SetHeader([]string{"Version", "Date", "Pre-Release", "Has Note", "Updated", "Excluded", "CVE"})
 	for _, r := range releases {
-		table.Append([]string{r.Version, r.Date.Local().String(), yesNo(r.IsPrerelease), yesNo(r.HasNote), yesNo(r.IsUpdated), yesNo(r.IsExcluded)})
+		table.Append([]string{r.Version, r.Date.Local().String(), yesNo(r.IsPrerelease), yesNo(r.HasNote), yesNo(r.IsUpdated), yesNo(r.IsExcluded), yesNo(len(r.CVE) > 0)})
 	}
 	table.Render()
 }
@@ -222,6 +222,9 @@ func printRelease(cmd *cobra.Command, r *newreleases.Release) {
 	}
 	if r.IsExcluded {
 		table.Append([]string{"Excluded:", "yes"})
+	}
+	if len(r.CVE) > 0 {
+		table.Append([]string{"CVE:", strings.Join(r.CVE, ", ")})
 	}
 	table.Render()
 }

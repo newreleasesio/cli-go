@@ -207,6 +207,8 @@ golang.org/x/crypto v0.0.0-20190510104115-cbcb75029529/go.mod h1:yigFU9vqHzYiE8U
 golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
 golang.org/x/crypto v0.0.0-20200709230013-948cd5f35899 h1:DZhuSZLsGlFL4CmhA8BcRA0mnthyA/nZ00AqCUo7vHg=
 golang.org/x/crypto v0.0.0-20200709230013-948cd5f35899/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de h1:ikNHVSjEfnvz6sxdSPCaPt572qowuyMDMJLLm3Db3ig=
+golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
 golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
@@ -333,4 +335,6 @@ jaytaylor.com/html2text v0.0.0-20200412013138-3577fbdbcff7 h1:mub0MmFLOn8XLikZOA
 jaytaylor.com/html2text v0.0.0-20200412013138-3577fbdbcff7/go.mod h1:OxvTsCwKosqQ1q7B+8FwXqg4rKZ/UG9dUW+g/VL2xH4=
 newreleases.io/newreleases v1.4.0 h1:rUTHJT15P6sasUBABKpblECTuP8++xAVruoPHs+Fzto=
 newreleases.io/newreleases v1.4.0/go.mod h1:IFoaLRTd4ZNVIEIZflkjRt+0Z4BOgivteiLGs9vPobw=
+newreleases.io/newreleases v1.5.1 h1:PLX8wmjxxj0ZyKkPdqtddT8krKoNy5SM4OOwdNP9x7E=
+newreleases.io/newreleases v1.5.1/go.mod h1:IFoaLRTd4ZNVIEIZflkjRt+0Z4BOgivteiLGs9vPobw=
 rsc.io/binaryregexp v0.2.0/go.mod h1:qTv7/COck+e2FymRvadv62gMdZztPaShugOCi3I+8D8=
