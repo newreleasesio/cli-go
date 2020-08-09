@@ -25,6 +25,8 @@ func (c *command) initProjectUpdateCmd(projectCmd *cobra.Command) (err error) {
 		optionNameHangoutsChatRemove   = "hangouts-chat-remove"
 		optionNameMicrosoftTeams       = "microsoft-teams"
 		optionNameMicrosoftTeamsRemove = "microsoft-teams-remove"
+		optionNameMattermost           = "mattermost"
+		optionNameMattermostRemove     = "mattermost-remove"
 		optionNameWebhook              = "webhook"
 		optionNameWebhookRemove        = "webhook-remove"
 		optionNameExclusions           = "regex-exclude"
@@ -126,6 +128,21 @@ func (c *command) initProjectUpdateCmd(projectCmd *cobra.Command) (err error) {
 					o.MSTeamsWebhookIDs = msTeamsWebhookIDs
 				}
 			}
+			mattermostRemove, err := flags.GetBool(optionNameMattermostRemove)
+			if err != nil {
+				return err
+			}
+			if mattermostRemove {
+				o.MattermostWebhookIDs = make([]string, 0)
+			} else {
+				mattermostWebhookIDs, err := flags.GetStringArray(optionNameMattermost)
+				if err != nil {
+					return err
+				}
+				if len(mattermostWebhookIDs) > 0 {
+					o.MattermostWebhookIDs = mattermostWebhookIDs
+				}
+			}
 			webhookRemove, err := flags.GetBool(optionNameWebhookRemove)
 			if err != nil {
 				return err
@@ -219,6 +236,8 @@ func (c *command) initProjectUpdateCmd(projectCmd *cobra.Command) (err error) {
 	cmd.Flags().Bool(optionNameHangoutsChatRemove, false, "remove Hangouts Chat notifications")
 	cmd.Flags().StringArray(optionNameMicrosoftTeams, nil, "Microsoft Teams webhook ID")
 	cmd.Flags().Bool(optionNameMicrosoftTeamsRemove, false, "remove Microsoft Teams notifications")
+	cmd.Flags().StringArray(optionNameMattermost, nil, "Mattermost webhook ID")
+	cmd.Flags().Bool(optionNameMattermostRemove, false, "remove Mattermost notifications")
 	cmd.Flags().StringArray(optionNameWebhook, nil, "Webhook ID")
 	cmd.Flags().Bool(optionNameWebhookRemove, false, "remove Webhook notifications")
 	cmd.Flags().StringArray(optionNameExclusions, nil, "Regex version exclusion, suffix with \"-inverse\" for inclusion")

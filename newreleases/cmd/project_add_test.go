@@ -37,6 +37,7 @@ func TestProjectCmd_Add(t *testing.T) {
 				"--discord", "zext4mdsbe6tyksdfey0td5gwg",
 				"--hangouts-chat", "etyksdfeyxt4mdsbe60td5gwgz",
 				"--microsoft-teams", "0td5gwgzextbe6tyksdfey4mds",
+				"--mattermost", "wgxtzed4yksd5dfeymsbe6t0tg",
 				"--webhook", "tbe6tyksdfey4md0td5gwgzexs",
 				"--regex-exclude", `^0\.1`,
 				"--regex-exclude", `^0\.3-inverse`,
@@ -44,7 +45,7 @@ func TestProjectCmd_Add(t *testing.T) {
 				"--exclude-updated",
 			},
 			projectsService: newMockProjectsService(1, nil),
-			wantOutput:      "ID:                      new                                                      \nName:                    golang/go                                                \nProvider:                github                                                   \nEmail:                   weekly                                                   \nSlack:                   mdsbe60td5gwgzetyksdfeyxt4                               \nTelegram:                sdfeyxt4mdsbe60td5gwgzetyk                               \nDiscord:                 4mdsbe60td5gwgzetyksdfeyxt, zext4mdsbe6tyksdfey0td5gwg   \nHangouts Chat:           etyksdfeyxt4mdsbe60td5gwgz                               \nMicrosoft Teams:         0td5gwgzextbe6tyksdfey4mds                               \nWebhooks:                tbe6tyksdfey4md0td5gwgzexs                               \nRegex Exclude:           ^0\\.1                                                    \nRegex Exclude Inverse:   ^0\\.3                                                    \nExclude Pre-Releases:    yes                                                      \nExclude Updated:         yes                                                      \n",
+			wantOutput:      "ID:                      new                                                      \nName:                    golang/go                                                \nProvider:                github                                                   \nEmail:                   weekly                                                   \nSlack:                   mdsbe60td5gwgzetyksdfeyxt4                               \nTelegram:                sdfeyxt4mdsbe60td5gwgzetyk                               \nDiscord:                 4mdsbe60td5gwgzetyksdfeyxt, zext4mdsbe6tyksdfey0td5gwg   \nHangouts Chat:           etyksdfeyxt4mdsbe60td5gwgz                               \nMicrosoft Teams:         0td5gwgzextbe6tyksdfey4mds                               \nMattermost:              wgxtzed4yksd5dfeymsbe6t0tg                               \nWebhooks:                tbe6tyksdfey4md0td5gwgzexs                               \nRegex Exclude:           ^0\\.1                                                    \nRegex Exclude Inverse:   ^0\\.3                                                    \nExclude Pre-Releases:    yes                                                      \nExclude Updated:         yes                                                      \n",
 		},
 		{
 			name:            "error",

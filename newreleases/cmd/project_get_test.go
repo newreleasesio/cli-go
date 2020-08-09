@@ -31,9 +31,9 @@ func TestProjectCmd_Get(t *testing.T) {
 			wantOutput:      "ID:         mdsbe60td5gwgzetyksdfeyxt4   \nName:       golang/go                    \nProvider:   github                       \n",
 		},
 		{
-			name: "full project",
+			name:            "full project",
 			projectsService: newMockProjectsService(1, nil, []newreleases.Project{fullProject}),
-			wantOutput: "ID:                      mdsbe60td5gwgzetyksdfeyxt4   \nName:                    golang/go                    \nProvider:                github                       \nEmail:                   daily                        \nSlack:                   zetyksdfeymdsbe60td5gwgxt4   \nTelegram:                sbe60td5gwgxtzetyksdfeymd4   \nDiscord:                 tyksdfeymsbegxtzed460td5gw   \nHangouts Chat:           yksdfeymsbe6t0td5gzed4wgxt   \nMicrosoft Teams:         gwgxtzed4yksdfeymsbe6t0td5   \nWebhooks:                e6t0td5ykgwgxtzed4eymsbsdf   \nRegex Exclude:           ^0\\.1                        \nRegex Exclude Inverse:   ^0\\.3                        \nExclude Pre-Releases:    yes                          \nExclude Updated:         yes                          \n",
+			wantOutput:      "ID:                      mdsbe60td5gwgzetyksdfeyxt4   \nName:                    golang/go                    \nProvider:                github                       \nEmail:                   daily                        \nSlack:                   zetyksdfeymdsbe60td5gwgxt4   \nTelegram:                sbe60td5gwgxtzetyksdfeymd4   \nDiscord:                 tyksdfeymsbegxtzed460td5gw   \nHangouts Chat:           yksdfeymsbe6t0td5gzed4wgxt   \nMicrosoft Teams:         gwgxtzed4yksdfeymsbe6t0td5   \nMattermost:              wgxtzed4yksd5dfeymsbe6t0tg   \nWebhooks:                e6t0td5ykgwgxtzed4eymsbsdf   \nRegex Exclude:           ^0\\.1                        \nRegex Exclude Inverse:   ^0\\.3                        \nExclude Pre-Releases:    yes                          \nExclude Updated:         yes                          \n",
 		},
 		{
 			name:            "error",

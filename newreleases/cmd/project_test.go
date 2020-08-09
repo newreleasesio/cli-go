@@ -28,6 +28,7 @@ var (
 		DiscordIDs:             []string{"tyksdfeymsbegxtzed460td5gw"},
 		HangoutsChatWebhookIDs: []string{"yksdfeymsbe6t0td5gzed4wgxt"},
 		MSTeamsWebhookIDs:      []string{"gwgxtzed4yksdfeymsbe6t0td5"},
+		MattermostWebhookIDs:   []string{"wgxtzed4yksd5dfeymsbe6t0tg"},
 		WebhookIDs:             []string{"e6t0td5ykgwgxtzed4eymsbsdf"},
 		Exclusions: []newreleases.Exclusion{
 			{Value: `^0\.1`},
@@ -134,6 +135,9 @@ func (s mockProjectsService) Add(ctx context.Context, provider, name string, o *
 	if o.MSTeamsWebhookIDs != nil {
 		project.MSTeamsWebhookIDs = o.MSTeamsWebhookIDs
 	}
+	if o.MattermostWebhookIDs != nil {
+		project.MattermostWebhookIDs = o.MattermostWebhookIDs
+	}
 	if o.WebhookIDs != nil {
 		project.WebhookIDs = o.WebhookIDs
 	}
@@ -172,6 +176,9 @@ func (s mockProjectsService) UpdateByID(ctx context.Context, id string, o *newre
 	if o.MSTeamsWebhookIDs != nil {
 		project.MSTeamsWebhookIDs = o.MSTeamsWebhookIDs
 	}
+	if o.MattermostWebhookIDs != nil {
+		project.MattermostWebhookIDs = o.MattermostWebhookIDs
+	}
 	if o.WebhookIDs != nil {
 		project.WebhookIDs = o.WebhookIDs
 	}
@@ -209,6 +216,9 @@ func (s mockProjectsService) UpdateByName(ctx context.Context, provider, name st
 	}
 	if o.MSTeamsWebhookIDs != nil {
 		project.MSTeamsWebhookIDs = o.MSTeamsWebhookIDs
+	}
+	if o.MattermostWebhookIDs != nil {
+		project.MattermostWebhookIDs = o.MattermostWebhookIDs
 	}
 	if o.WebhookIDs != nil {
 		project.WebhookIDs = o.WebhookIDs

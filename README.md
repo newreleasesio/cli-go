@@ -257,6 +257,7 @@ newreleases telegram
 newreleases discord
 newreleases hangouts-chat
 newreleases microsoft-teams
+newreleases mattermost
 newreleases webhook
 ```
 

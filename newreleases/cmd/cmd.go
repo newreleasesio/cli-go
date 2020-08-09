@@ -45,6 +45,7 @@ type command struct {
 	discordChannelsService        discordChannelsService
 	hangoutsChatWebhooksService   hangoutsChatWebhooksService
 	microsoftTeamsWebhooksService microsoftTeamsWebhooksService
+	mattermostWebhooksService     mattermostWebhooksService
 	webhooksService               webhooksService
 }
 
@@ -99,6 +100,9 @@ More information at https://newreleases.io.`,
 		return nil, err
 	}
 	if err := c.initMicrosoftTeamsCmd(); err != nil {
+		return nil, err
+	}
+	if err := c.initMattermostCmd(); err != nil {
 		return nil, err
 	}
 	if err := c.initWebhookCmd(); err != nil {
