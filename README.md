@@ -1,5 +1,8 @@
 <a href="https://newreleases.io"><img src="https://newreleases.io/logo.svg" alt="NewReleases" width="576"></a>
 
+[![Go](https://github.com/newreleasesio/cli-go/workflows/Go/badge.svg)](https://github.com/newreleasesio/cli-go/actions)
+[![NewReleases](https://newreleases.io/badge.svg)](https://newreleases.io/github/newreleasesio/cli-go)
+
 A command line client for managing [NewReleases](https://newreleases.io) projects.
 
 # Installation
