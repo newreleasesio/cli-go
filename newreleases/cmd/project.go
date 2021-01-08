@@ -77,6 +77,7 @@ func printProjectsTable(cmd *cobra.Command, projects []newreleases.Project) {
 		hasHangoutsChat       bool
 		hasMicrosoftTeams     bool
 		hasMattermost         bool
+		hasRocketchat         bool
 		hasWebhook            bool
 		hasExclusions         bool
 		hasInclusions         bool
@@ -104,6 +105,9 @@ func printProjectsTable(cmd *cobra.Command, projects []newreleases.Project) {
 		}
 		if len(p.MattermostWebhookIDs) > 0 {
 			hasMattermost = true
+		}
+		if len(p.RocketchatWebhookIDs) > 0 {
+			hasRocketchat = true
 		}
 		if len(p.WebhookIDs) > 0 {
 			hasWebhook = true
@@ -151,6 +155,9 @@ func printProjectsTable(cmd *cobra.Command, projects []newreleases.Project) {
 	if hasMattermost {
 		header = append(header, "Mattermost")
 	}
+	if hasRocketchat {
+		header = append(header, "Rocket.Chat")
+	}
 	if hasWebhook {
 		header = append(header, "Webhook")
 	}
@@ -189,6 +196,9 @@ func printProjectsTable(cmd *cobra.Command, projects []newreleases.Project) {
 		}
 		if hasMattermost {
 			r = append(r, strings.Join(p.MattermostWebhookIDs, ", "))
+		}
+		if hasRocketchat {
+			r = append(r, strings.Join(p.RocketchatWebhookIDs, ", "))
 		}
 		if hasWebhook {
 			r = append(r, strings.Join(p.WebhookIDs, ", "))
@@ -247,6 +257,9 @@ func printProject(cmd *cobra.Command, p *newreleases.Project) {
 	}
 	if len(p.MattermostWebhookIDs) > 0 {
 		table.Append([]string{"Mattermost:", strings.Join(p.MattermostWebhookIDs, ", ")})
+	}
+	if len(p.RocketchatWebhookIDs) > 0 {
+		table.Append([]string{"Rocket.Chat:", strings.Join(p.RocketchatWebhookIDs, ", ")})
 	}
 	if len(p.WebhookIDs) > 0 {
 		table.Append([]string{"Webhooks:", strings.Join(p.WebhookIDs, ", ")})

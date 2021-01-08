@@ -22,6 +22,7 @@ type (
 	HangoutsChatWebhooksService   = hangoutsChatWebhooksService
 	MicrosoftTeamsWebhooksService = microsoftTeamsWebhooksService
 	MattermostWebhooksService     = mattermostWebhooksService
+	RocketchatWebhooksService     = rocketchatWebhooksService
 	WebhooksService               = webhooksService
 )
 
@@ -134,6 +135,12 @@ func WithMicrosoftTeamsWebhooksService(s MicrosoftTeamsWebhooksService) func(c *
 func WithMattermostWebhooksService(s MattermostWebhooksService) func(c *Command) {
 	return func(c *Command) {
 		c.mattermostWebhooksService = s
+	}
+}
+
+func WithRocketchatWebhooksService(s RocketchatWebhooksService) func(c *Command) {
+	return func(c *Command) {
+		c.rocketchatWebhooksService = s
 	}
 }
 
