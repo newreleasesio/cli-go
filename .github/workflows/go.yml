@@ -12,15 +12,9 @@ jobs:
     steps:
 
       - name: Set up Go
-        uses: actions/setup-go@v1
+        uses: actions/setup-go@v2
         with:
-          go-version: 1.x
-
-      - name: Set up env
-        run: |
-          echo "::set-env name=GOPATH::$(go env GOPATH)"
-          echo "::add-path::$(go env GOPATH)/bin"
-        shell: bash
+          go-version: 1.15
 
       - name: Checkout
         uses: actions/checkout@v1
@@ -38,15 +32,15 @@ jobs:
             ${{ runner.OS }}-
 
       - name: Set up GolangCI-Lint
-        run: go get -u github.com/golangci/golangci-lint/cmd/golangci-lint@v1.29.0
-        env:
-          GO111MODULE: on
-        working-directory: ~
+        if: matrix.os == 'ubuntu-latest'
+        run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.34.1
 
       - name: GolangCI-Lint
+        if: matrix.os == 'ubuntu-latest'
         run: golangci-lint run
 
       - name: Vet
+        if: matrix.os == 'ubuntu-latest'
         run: go vet -v ./...
 
       - name: Build
