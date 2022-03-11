@@ -6,4 +6,4 @@
 package cmd
 
 // Version is a manually set semantic version number.
-var Version = "v0.1.9"
+var Version = "v0.1.10-dev"
