@@ -8,6 +8,7 @@ package cmd
 import (
 	"context"
 	"strings"
+	"unicode"
 
 	"github.com/spf13/cobra"
 	"newreleases.io/newreleases"
@@ -83,6 +84,8 @@ func printProjectsTable(cmd *cobra.Command, projects []newreleases.Project) {
 		hasInclusions         bool
 		hasExcludePrereleases bool
 		hasExcludeUpdated     bool
+		hasNote               bool
+		hasTag                bool
 	)
 	for _, p := range projects {
 		if p.EmailNotification != newreleases.EmailNotificationNone && p.EmailNotification != "" {
@@ -126,6 +129,12 @@ func printProjectsTable(cmd *cobra.Command, projects []newreleases.Project) {
 		}
 		if p.ExcludeUpdated {
 			hasExcludeUpdated = true
+		}
+		if len(p.Note) > 0 {
+			hasNote = true
+		}
+		if len(p.TagIDs) > 0 {
+			hasTag = true
 		}
 	}
 
@@ -172,6 +181,12 @@ func printProjectsTable(cmd *cobra.Command, projects []newreleases.Project) {
 	}
 	if hasExcludeUpdated {
 		header = append(header, "Exclude Updated")
+	}
+	if hasNote {
+		header = append(header, "Note")
+	}
+	if hasTag {
+		header = append(header, "Tags")
 	}
 	table.SetHeader(header)
 	for _, p := range projects {
@@ -226,6 +241,16 @@ func printProjectsTable(cmd *cobra.Command, projects []newreleases.Project) {
 		}
 		if hasExcludeUpdated {
 			r = append(r, yesNo(p.ExcludeUpdated))
+		}
+		if hasNote {
+			note := p.Note
+			if len(note) > 10 {
+				note = strings.TrimRightFunc(strings.TrimSpace(note[:10]), unicode.IsSymbol) + "..."
+			}
+			r = append(r, note)
+		}
+		if hasTag {
+			r = append(r, strings.Join(p.TagIDs, ", "))
 		}
 		table.Append(r)
 	}
@@ -283,6 +308,12 @@ func printProject(cmd *cobra.Command, p *newreleases.Project) {
 	}
 	if p.ExcludeUpdated {
 		table.Append([]string{"Exclude Updated:", "yes"})
+	}
+	if len(p.Note) > 0 {
+		table.Append([]string{"Note:", p.Note})
+	}
+	if len(p.TagIDs) > 0 {
+		table.Append([]string{"Tags:", strings.Join(p.TagIDs, ", ")})
 	}
 	table.Render()
 }

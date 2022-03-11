@@ -14,6 +14,7 @@ func (c *command) initProjectListCmd(projectCmd *cobra.Command) (err error) {
 	var (
 		optionNamePage     = "page"
 		optionNameProvider = "provider"
+		optionNameTagID    = "tag"
 		optionNameOrder    = "order"
 	)
 
@@ -33,6 +34,10 @@ func (c *command) initProjectListCmd(projectCmd *cobra.Command) (err error) {
 			if err != nil {
 				return err
 			}
+			tagID, err := flags.GetString(optionNameTagID)
+			if err != nil {
+				return err
+			}
 			order, err := flags.GetString(optionNameOrder)
 			if err != nil {
 				return err
@@ -41,6 +46,7 @@ func (c *command) initProjectListCmd(projectCmd *cobra.Command) (err error) {
 			o := newreleases.ProjectListOptions{
 				Page:     page,
 				Provider: provider,
+				TagID:    tagID,
 			}
 			if order != "" {
 				o.Order = newreleases.ProjectListOrder(order)
@@ -79,6 +85,7 @@ func (c *command) initProjectListCmd(projectCmd *cobra.Command) (err error) {
 	cmd.Flags().IntP(optionNamePage, "p", 1, "page number")
 	cmd.Flags().String(optionNameProvider, "", "filter by provider")
 	cmd.Flags().String(optionNameOrder, "", "sort projects: updated, added, name; default updated")
+	cmd.Flags().String(optionNameTagID, "", "filter by tag ID")
 
 	projectCmd.AddCommand(cmd)
 	return addClientFlags(cmd)

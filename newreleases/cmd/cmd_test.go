@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"regexp"
 	"testing"
 	"time"
 
@@ -51,4 +52,10 @@ func newTime(t *testing.T, s string) (tm time.Time) {
 		t.Fatal(err)
 	}
 	return tm
+}
+
+var spaceRe = regexp.MustCompile(`\s+`)
+
+func trimSpace(s string) string {
+	return spaceRe.ReplaceAllString(s, " ")
 }

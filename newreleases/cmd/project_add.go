@@ -26,6 +26,8 @@ func (c *command) initProjectAddCmd(projectCmd *cobra.Command) (err error) {
 		optionNameExclusions         = "regex-exclude"
 		optionNameExcludePrereleases = "exclude-prereleases"
 		optionNameExcludeUpdated     = "exclude-updated"
+		optionNameNote               = "note"
+		optionNameTag                = "tag"
 	)
 
 	cmd := &cobra.Command{
@@ -111,6 +113,17 @@ func (c *command) initProjectAddCmd(projectCmd *cobra.Command) (err error) {
 				}
 				o.ExcludeUpdated = &excludeUpdated
 			}
+			o.TagIDs, err = flags.GetStringArray(optionNameTag)
+			if err != nil {
+				return err
+			}
+			if flags.Changed(optionNameNote) {
+				note, err := flags.GetString(optionNameNote)
+				if err != nil {
+					return err
+				}
+				o.Note = &note
+			}
 
 			project, err := c.projectsService.Add(ctx, args[0], args[1], o)
 			if err != nil {
@@ -140,6 +153,8 @@ func (c *command) initProjectAddCmd(projectCmd *cobra.Command) (err error) {
 	cmd.Flags().StringArray(optionNameExclusions, nil, "Regex version exclusion, suffix with \"-inverse\" for inclusion")
 	cmd.Flags().Bool(optionNameExcludePrereleases, false, "exclude pre-releases")
 	cmd.Flags().Bool(optionNameExcludeUpdated, false, "exclude updated")
+	cmd.Flags().StringArray(optionNameTag, nil, "Tag ID")
+	cmd.Flags().String(optionNameNote, "", "Note")
 
 	projectCmd.AddCommand(cmd)
 	return addClientFlags(cmd)

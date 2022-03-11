@@ -77,9 +77,19 @@ func TestProjectCmd_List(t *testing.T) {
 			wantOutput: "ID                           NAME                 PROVIDER \ngwgzetyksdfeyxt4mdsbe60td5   vue                  npm        \nksdfeyxt4mdsbe60td5gwgzety   newreleases/cli-go   github     \nmdsbe60td5gwgzetyksdfeyxt4   golang/go            github     \n",
 		},
 		{
+			name: "tag id",
+			args: []string{"--tag", "123456"},
+			projectsService: newMockProjectsService(1, nil, []newreleases.Project{
+				{ID: "gwgzetyksdfeyxt4mdsbe60td5", Name: "vue", Provider: "npm", TagIDs: []string{"123456"}},
+				{ID: "mdsbe60td5gwgzetyksdfeyxt4", Name: "golang/go", Provider: "github", TagIDs: []string{"123456", "345678"}},
+				{ID: "ksdfeyxt4mdsbe60td5gwgzety", Name: "newreleases/cli-go", Provider: "github"},
+			}),
+			wantOutput: "ID                           NAME                 PROVIDER  TAGS\ngwgzetyksdfeyxt4mdsbe60td5   vue                  npm    123456        \nmdsbe60td5gwgzetyksdfeyxt4   golang/go            github     123456, 345678      \n",
+		},
+		{
 			name:            "full project",
 			projectsService: newMockProjectsService(1, nil, []newreleases.Project{fullProject}),
-			wantOutput:      "ID                           NAME        PROVIDER   EMAIL   SLACK                        TELEGRAM                     DISCORD                      HANGOUTS CHAT                MICROSOFT TEAMS              MATTERMOST                   ROCKET CHAT                  WEBHOOK                      REGEX EXCLUDE   REGEX EXCLUDE INVERSE   EXCLUDE PRE-RELEASES   EXCLUDE UPDATED \nmdsbe60td5gwgzetyksdfeyxt4   golang/go   github     daily   zetyksdfeymdsbe60td5gwgxt4   sbe60td5gwgxtzetyksdfeymd4   tyksdfeymsbegxtzed460td5gw   yksdfeymsbe6t0td5gzed4wgxt   gwgxtzed4yksdfeymsbe6t0td5   wgxtzed4yksd5dfeymsbe6t0tg   5dfeymsbe6t0tgwgxtzed4yksd   e6t0td5ykgwgxtzed4eymsbsdf   ^0\\.1           ^0\\.3                   yes                    yes               \n",
+			wantOutput:      "ID                           NAME        PROVIDER   EMAIL   SLACK                        TELEGRAM                     DISCORD                      HANGOUTS CHAT                MICROSOFT TEAMS              MATTERMOST                   ROCKET CHAT                  WEBHOOK                      REGEX EXCLUDE   REGEX EXCLUDE INVERSE   EXCLUDE PRE-RELEASES   EXCLUDE UPDATED   NOTE            TAGS         \nmdsbe60td5gwgzetyksdfeyxt4   golang/go   github     daily   zetyksdfeymdsbe60td5gwgxt4   sbe60td5gwgxtzetyksdfeymd4   tyksdfeymsbegxtzed460td5gw   yksdfeymsbe6t0td5gzed4wgxt   gwgxtzed4yksdfeymsbe6t0td5   wgxtzed4yksd5dfeymsbe6t0tg   5dfeymsbe6t0tgwgxtzed4yksd   e6t0td5ykgwgxtzed4eymsbsdf   ^0\\.1           ^0\\.3                   yes                    yes               Initial no...   33f1db7254b9   \n",
 		},
 		{
 			name:            "error",
@@ -97,9 +107,10 @@ func TestProjectCmd_List(t *testing.T) {
 				t.Fatalf("got error %v, want %v", err, tc.wantError)
 			}
 
-			gotOutput := outputBuf.String()
-			if gotOutput != tc.wantOutput {
-				t.Errorf("got output %q, want %q", gotOutput, tc.wantOutput)
+			wantOutput := trimSpace(tc.wantOutput)
+			gotOutput := trimSpace(outputBuf.String())
+			if gotOutput != wantOutput {
+				t.Errorf("got output %q, want %q", gotOutput, wantOutput)
 			}
 		})
 	}

@@ -48,6 +48,7 @@ type command struct {
 	mattermostWebhooksService     mattermostWebhooksService
 	rocketchatWebhooksService     rocketchatWebhooksService
 	webhooksService               webhooksService
+	tagsService                   tagsService
 }
 
 type option func(*command)
@@ -112,6 +113,9 @@ More information at https://newreleases.io.`,
 	if err := c.initWebhookCmd(); err != nil {
 		return nil, err
 	}
+	if err := c.initTagCmd(); err != nil {
+		return nil, err
+	}
 
 	c.initConfigureCmd()
 	if err := c.initGetAuthKeyCmd(); err != nil {
@@ -129,7 +133,7 @@ func (c *command) Execute() (err error) {
 }
 
 // Execute parses command line arguments and runs appropriate functions.
-func Execute() (err error) {
+func Execute() error {
 	c, err := newCommand()
 	if err != nil {
 		return err

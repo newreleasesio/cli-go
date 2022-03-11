@@ -44,9 +44,11 @@ func TestProjectCmd_Add(t *testing.T) {
 				"--regex-exclude", `^0\.3-inverse`,
 				"--exclude-prereleases",
 				"--exclude-updated",
+				"--note", "Some note",
+				"--tag", "33f1db7254b9",
 			},
 			projectsService: newMockProjectsService(1, nil),
-			wantOutput:      "ID:                      new                                                      \nName:                    golang/go                                                \nProvider:                github                                                   \nEmail:                   weekly                                                   \nSlack:                   mdsbe60td5gwgzetyksdfeyxt4                               \nTelegram:                sdfeyxt4mdsbe60td5gwgzetyk                               \nDiscord:                 4mdsbe60td5gwgzetyksdfeyxt, zext4mdsbe6tyksdfey0td5gwg   \nHangouts Chat:           etyksdfeyxt4mdsbe60td5gwgz                               \nMicrosoft Teams:         0td5gwgzextbe6tyksdfey4mds                               \nMattermost:              wgxtzed4yksd5dfeymsbe6t0tg                               \nRocket.Chat:             5dfeymsbe6t0tgwgxtzed4yksd                               \nWebhooks:                tbe6tyksdfey4md0td5gwgzexs                               \nRegex Exclude:           ^0\\.1                                                    \nRegex Exclude Inverse:   ^0\\.3                                                    \nExclude Pre-Releases:    yes                                                      \nExclude Updated:         yes                                                      \n",
+			wantOutput:      "ID:                      new                                                      \nName:                    golang/go                                                \nProvider:                github                                                   \nEmail:                   weekly                                                   \nSlack:                   mdsbe60td5gwgzetyksdfeyxt4                               \nTelegram:                sdfeyxt4mdsbe60td5gwgzetyk                               \nDiscord:                 4mdsbe60td5gwgzetyksdfeyxt, zext4mdsbe6tyksdfey0td5gwg   \nHangouts Chat:           etyksdfeyxt4mdsbe60td5gwgz                               \nMicrosoft Teams:         0td5gwgzextbe6tyksdfey4mds                               \nMattermost:              wgxtzed4yksd5dfeymsbe6t0tg                               \nRocket.Chat:             5dfeymsbe6t0tgwgxtzed4yksd                               \nWebhooks:                tbe6tyksdfey4md0td5gwgzexs                               \nRegex Exclude:           ^0\\.1                                                    \nRegex Exclude Inverse:   ^0\\.3                                                    \nExclude Pre-Releases:    yes                                                      \nExclude Updated:         yes                                                      \nNote:                    Some note                 \nTags:                    33f1db7254b9                 \n",
 		},
 		{
 			name:            "error",
@@ -65,9 +67,10 @@ func TestProjectCmd_Add(t *testing.T) {
 				t.Fatalf("got error %v, want %v", err, tc.wantError)
 			}
 
-			gotOutput := outputBuf.String()
-			if gotOutput != tc.wantOutput {
-				t.Errorf("got output %q, want %q", gotOutput, tc.wantOutput)
+			wantOutput := trimSpace(tc.wantOutput)
+			gotOutput := trimSpace(outputBuf.String())
+			if gotOutput != wantOutput {
+				t.Errorf("got output %q, want %q", gotOutput, wantOutput)
 			}
 		})
 	}

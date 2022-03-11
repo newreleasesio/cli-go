@@ -22,12 +22,14 @@ You may need additional privileges to write to `/usr/local/bin`, but the file ca
 
 Supported operating systems and architectures:
 
+- macOS ARM 64bit `darwin-arm64`
 - macOS 64bit `darwin-amd64`
 - Linux 64bit `linux-amd64`
 - Linux 32bit `linux-386`
 - Linux ARM 64bit `linux-arm64`
 - Linux ARM 32bit `linux-armv6`
 - Windows 64bit `windows-amd64`
+- Windows ARM 64bit `windows-arm64`
 - Windows 32bit `windows-386`
 
 Deb and RPM packages are also built.
@@ -71,7 +73,7 @@ newreleases project add -h
 
 ## Working with projects
 
-The base command for getting releases is `project` and it shows available sub-commands which are `list`, `search`, `get`, `add`, `update` and `remove`.
+The base command for getting projects is `project` and it shows available sub-commands which are `list`, `search`, `get`, `add`, `update` and `remove`.
 
 ### List projects
 
@@ -263,6 +265,50 @@ newreleases microsoft-teams
 newreleases mattermost
 newreleases rocketchat
 newreleases webhook
+```
+
+## Working with tags
+
+The base command for getting tags is `tag` and it shows available sub-commands which are `list`, `get`, `add`, `update` and `remove`.
+
+### List tags
+
+Listing all tags:
+
+```sh
+newreleases tag list
+```
+
+### Get a tag
+
+Information about a specific tag can be retrieved with:
+
+```sh
+newreleases tag get 33f1db7254b9
+```
+
+### Add new tag
+
+A tag can be added with specifying its name:
+
+```sh
+newreleases tag add Awesome
+```
+
+### Update tag name
+
+To change a tag name, it should be referenced by its ID and a new name should be specified.
+
+```sh
+newreleases tag update 33f1db7254b9 --name Cool
+```
+
+### Remove a tag
+
+Tag is removed by its ID:
+
+```sh
+newreleases tag remove 33f1db7254b9
 ```
 
 # Versioning

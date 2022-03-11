@@ -35,6 +35,9 @@ func (c *command) initProjectUpdateCmd(projectCmd *cobra.Command) (err error) {
 		optionNameExclusionsRemove     = "regex-exclude-remove"
 		optionNameExcludePrereleases   = "exclude-prereleases"
 		optionNameExcludeUpdated       = "exclude-updated"
+		optionNameNote                 = "note"
+		optionNameTag                  = "tag"
+		optionNameTagRemove            = "tag-remove"
 	)
 
 	cmd := &cobra.Command{
@@ -213,6 +216,30 @@ func (c *command) initProjectUpdateCmd(projectCmd *cobra.Command) (err error) {
 				o.ExcludeUpdated = &excludeUpdated
 			}
 
+			tagRemove, err := flags.GetBool(optionNameTagRemove)
+			if err != nil {
+				return err
+			}
+			if tagRemove {
+				o.TagIDs = make([]string, 0)
+			} else {
+				tagIDs, err := flags.GetStringArray(optionNameTag)
+				if err != nil {
+					return err
+				}
+				if len(tagIDs) > 0 {
+					o.TagIDs = tagIDs
+				}
+			}
+
+			if flags.Changed(optionNameNote) {
+				note, err := flags.GetString(optionNameNote)
+				if err != nil {
+					return err
+				}
+				o.Note = &note
+			}
+
 			var project *newreleases.Project
 			switch len(args) {
 			case 1:
@@ -242,7 +269,7 @@ func (c *command) initProjectUpdateCmd(projectCmd *cobra.Command) (err error) {
 		},
 	}
 
-	cmd.Flags().String(optionNameEmail, "none", "frequency of email notifications: instant, hourly, daily, weekly, none")
+	cmd.Flags().String(optionNameEmail, "", "frequency of email notifications: instant, hourly, daily, weekly, none")
 	cmd.Flags().StringArray(optionNameSlack, nil, "Slack channel ID")
 	cmd.Flags().Bool(optionNameSlackRemove, false, "remove Slack notifications")
 	cmd.Flags().StringArray(optionNameTelegram, nil, "Telegram chat ID")
@@ -263,6 +290,9 @@ func (c *command) initProjectUpdateCmd(projectCmd *cobra.Command) (err error) {
 	cmd.Flags().Bool(optionNameExclusionsRemove, false, "remove Regex version exclusions")
 	cmd.Flags().Bool(optionNameExcludePrereleases, false, "exclude pre-releases")
 	cmd.Flags().Bool(optionNameExcludeUpdated, false, "exclude updated")
+	cmd.Flags().StringArray(optionNameTag, nil, "Tag ID")
+	cmd.Flags().Bool(optionNameTagRemove, false, "remove Tags")
+	cmd.Flags().String(optionNameNote, "", "Note")
 
 	projectCmd.AddCommand(cmd)
 	return addClientFlags(cmd)

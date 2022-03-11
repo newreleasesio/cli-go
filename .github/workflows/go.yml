@@ -14,7 +14,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.15
+          go-version: 1.17
 
       - name: Checkout
         uses: actions/checkout@v1
@@ -31,13 +31,11 @@ jobs:
             ${{ runner.OS }}-build-
             ${{ runner.OS }}-
 
-      - name: Set up GolangCI-Lint
-        if: matrix.os == 'ubuntu-latest'
-        run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.34.1
-
-      - name: GolangCI-Lint
-        if: matrix.os == 'ubuntu-latest'
-        run: golangci-lint run
+      - name: Lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.43.0
+          args: --timeout 10m
 
       - name: Vet
         if: matrix.os == 'ubuntu-latest'

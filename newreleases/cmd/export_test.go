@@ -24,6 +24,7 @@ type (
 	MattermostWebhooksService     = mattermostWebhooksService
 	RocketchatWebhooksService     = rocketchatWebhooksService
 	WebhooksService               = webhooksService
+	TagsService                   = tagsService
 )
 
 var (
@@ -147,5 +148,11 @@ func WithRocketchatWebhooksService(s RocketchatWebhooksService) func(c *Command)
 func WithWebhooksService(s WebhooksService) func(c *Command) {
 	return func(c *Command) {
 		c.webhooksService = s
+	}
+}
+
+func WithTagsService(s TagsService) func(c *Command) {
+	return func(c *Command) {
+		c.tagsService = s
 	}
 }

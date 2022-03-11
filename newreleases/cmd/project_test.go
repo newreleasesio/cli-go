@@ -37,6 +37,8 @@ var (
 		},
 		ExcludePrereleases: true,
 		ExcludeUpdated:     true,
+		Note:               "Initial note",
+		TagIDs:             []string{"33f1db7254b9"},
 	}
 )
 
@@ -60,9 +62,20 @@ func (s mockProjectsService) List(ctx context.Context, o newreleases.ProjectList
 				projects = append(projects, p)
 			}
 		}
+	} else if o.TagID != "" {
+		for _, page := range s.pages {
+			for _, p := range page {
+				for _, tag := range p.TagIDs {
+					if tag == o.TagID {
+						projects = append(projects, p)
+					}
+				}
+			}
+		}
 	} else {
 		projects = s.pages[o.Page-1]
 	}
+
 	switch o.Order {
 	case newreleases.ProjectListOrderName:
 		sort.SliceStable(projects, func(i, j int) (less bool) {
@@ -154,6 +167,12 @@ func (s mockProjectsService) Add(ctx context.Context, provider, name string, o *
 	if o.ExcludeUpdated != nil {
 		project.ExcludeUpdated = *o.ExcludeUpdated
 	}
+	if o.Note != nil {
+		project.Note = *o.Note
+	}
+	if o.TagIDs != nil {
+		project.TagIDs = o.TagIDs
+	}
 	return project, s.err
 }
 
@@ -198,6 +217,12 @@ func (s mockProjectsService) UpdateByID(ctx context.Context, id string, o *newre
 	if o.ExcludeUpdated != nil {
 		project.ExcludeUpdated = *o.ExcludeUpdated
 	}
+	if o.Note != nil {
+		project.Note = *o.Note
+	}
+	if o.TagIDs != nil {
+		project.TagIDs = o.TagIDs
+	}
 	return project, s.err
 }
 
@@ -241,6 +266,12 @@ func (s mockProjectsService) UpdateByName(ctx context.Context, provider, name st
 	}
 	if o.ExcludeUpdated != nil {
 		project.ExcludeUpdated = *o.ExcludeUpdated
+	}
+	if o.Note != nil {
+		project.Note = *o.Note
+	}
+	if o.TagIDs != nil {
+		project.TagIDs = o.TagIDs
 	}
 	return project, s.err
 }
