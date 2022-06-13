@@ -8,7 +8,6 @@ package cmd_test
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -67,11 +66,7 @@ func TestConfigureCmd(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			dir, err := ioutil.TempDir("", "newreleases-cmd-")
-			if err != nil {
-				t.Fatal(err)
-			}
-			defer os.RemoveAll(dir)
+			dir := t.TempDir()
 
 			cfgFile := filepath.Join(dir, ".newreleases.yaml")
 			if !tc.newConfig {
@@ -122,7 +117,7 @@ func TestConfigureCmd(t *testing.T) {
 			}
 
 			if tc.wantData != "" {
-				gotData, err := ioutil.ReadFile(cfgFile)
+				gotData, err := os.ReadFile(cfgFile)
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -130,7 +125,7 @@ func TestConfigureCmd(t *testing.T) {
 					t.Errorf("got config file data %q, want %q", string(gotData), tc.wantData)
 				}
 			} else {
-				gotData, _ := ioutil.ReadFile(cfgFile)
+				gotData, _ := os.ReadFile(cfgFile)
 				if string(gotData) != "" {
 					t.Errorf("got config file data %q, but it should not be", string(gotData))
 				}
@@ -140,11 +135,7 @@ func TestConfigureCmd(t *testing.T) {
 }
 
 func TestConfigureCmd_overwrite(t *testing.T) {
-	dir, err := ioutil.TempDir("", "newreleases-cmd-")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	cfgFile := filepath.Join(dir, ".newreleases.yaml")
 	f, err := os.Create(cfgFile)
@@ -175,7 +166,7 @@ func TestConfigureCmd_overwrite(t *testing.T) {
 			t.Errorf("got output %q, want %q", gotOutput, wantOutput)
 		}
 
-		gotData, err := ioutil.ReadFile(cfgFile)
+		gotData, err := os.ReadFile(cfgFile)
 		if err != nil {
 			t.Fatal(err)
 		}

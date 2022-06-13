@@ -22,6 +22,7 @@ func (c *command) initProjectAddCmd(projectCmd *cobra.Command) (err error) {
 		optionNameMicrosoftTeams     = "microsoft-teams"
 		optionNameMattermost         = "mattermost"
 		optionNameRocketchat         = "rocketchat"
+		optionNameMatrix             = "matrix"
 		optionNameWebhook            = "webhook"
 		optionNameExclusions         = "regex-exclude"
 		optionNameExcludePrereleases = "exclude-prereleases"
@@ -77,6 +78,10 @@ func (c *command) initProjectAddCmd(projectCmd *cobra.Command) (err error) {
 				return err
 			}
 			o.RocketchatWebhookIDs, err = flags.GetStringArray(optionNameRocketchat)
+			if err != nil {
+				return err
+			}
+			o.MatrixRoomIDs, err = flags.GetStringArray(optionNameMatrix)
 			if err != nil {
 				return err
 			}
@@ -149,6 +154,7 @@ func (c *command) initProjectAddCmd(projectCmd *cobra.Command) (err error) {
 	cmd.Flags().StringArray(optionNameMicrosoftTeams, nil, "Microsoft Teams webhook ID")
 	cmd.Flags().StringArray(optionNameMattermost, nil, "Mattermost webhook ID")
 	cmd.Flags().StringArray(optionNameRocketchat, nil, "Rocket.Chat webhook ID")
+	cmd.Flags().StringArray(optionNameMatrix, nil, "Matrix room ID")
 	cmd.Flags().StringArray(optionNameWebhook, nil, "Webhook ID")
 	cmd.Flags().StringArray(optionNameExclusions, nil, "Regex version exclusion, suffix with \"-inverse\" for inclusion")
 	cmd.Flags().Bool(optionNameExcludePrereleases, false, "exclude pre-releases")

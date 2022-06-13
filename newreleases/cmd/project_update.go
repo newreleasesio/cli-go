@@ -29,6 +29,8 @@ func (c *command) initProjectUpdateCmd(projectCmd *cobra.Command) (err error) {
 		optionNameMattermostRemove     = "mattermost-remove"
 		optionNameRocketchat           = "rocketchat"
 		optionNameRocketchatRemove     = "rocketchat-remove"
+		optionNameMatrix               = "matrix"
+		optionNameMatrixRemove         = "matrix-remove"
 		optionNameWebhook              = "webhook"
 		optionNameWebhookRemove        = "webhook-remove"
 		optionNameExclusions           = "regex-exclude"
@@ -163,6 +165,21 @@ func (c *command) initProjectUpdateCmd(projectCmd *cobra.Command) (err error) {
 					o.RocketchatWebhookIDs = rocketchatWebhookIDs
 				}
 			}
+			matrixRemove, err := flags.GetBool(optionNameMatrixRemove)
+			if err != nil {
+				return err
+			}
+			if matrixRemove {
+				o.MatrixRoomIDs = make([]string, 0)
+			} else {
+				matrixRoomIDs, err := flags.GetStringArray(optionNameMatrix)
+				if err != nil {
+					return err
+				}
+				if len(matrixRoomIDs) > 0 {
+					o.MatrixRoomIDs = matrixRoomIDs
+				}
+			}
 			webhookRemove, err := flags.GetBool(optionNameWebhookRemove)
 			if err != nil {
 				return err
@@ -284,6 +301,8 @@ func (c *command) initProjectUpdateCmd(projectCmd *cobra.Command) (err error) {
 	cmd.Flags().Bool(optionNameMattermostRemove, false, "remove Mattermost notifications")
 	cmd.Flags().StringArray(optionNameRocketchat, nil, "Rocket.Chat webhook ID")
 	cmd.Flags().Bool(optionNameRocketchatRemove, false, "remove Rocket.Chat notifications")
+	cmd.Flags().StringArray(optionNameMatrix, nil, "Matrix room ID")
+	cmd.Flags().Bool(optionNameMatrixRemove, false, "remove Matrix notifications")
 	cmd.Flags().StringArray(optionNameWebhook, nil, "Webhook ID")
 	cmd.Flags().Bool(optionNameWebhookRemove, false, "remove Webhook notifications")
 	cmd.Flags().StringArray(optionNameExclusions, nil, "Regex version exclusion, suffix with \"-inverse\" for inclusion")

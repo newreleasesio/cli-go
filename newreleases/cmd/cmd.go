@@ -47,6 +47,7 @@ type command struct {
 	microsoftTeamsWebhooksService microsoftTeamsWebhooksService
 	mattermostWebhooksService     mattermostWebhooksService
 	rocketchatWebhooksService     rocketchatWebhooksService
+	matrixRoomsService            matrixRoomsService
 	webhooksService               webhooksService
 	tagsService                   tagsService
 }
@@ -108,6 +109,9 @@ More information at https://newreleases.io.`,
 		return nil, err
 	}
 	if err := c.initRocketchatCmd(); err != nil {
+		return nil, err
+	}
+	if err := c.initMatrixCmd(); err != nil {
 		return nil, err
 	}
 	if err := c.initWebhookCmd(); err != nil {

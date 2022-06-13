@@ -23,6 +23,7 @@ type (
 	MicrosoftTeamsWebhooksService = microsoftTeamsWebhooksService
 	MattermostWebhooksService     = mattermostWebhooksService
 	RocketchatWebhooksService     = rocketchatWebhooksService
+	MatrixRoomsService            = matrixRoomsService
 	WebhooksService               = webhooksService
 	TagsService                   = tagsService
 )
@@ -142,6 +143,12 @@ func WithMattermostWebhooksService(s MattermostWebhooksService) func(c *Command)
 func WithRocketchatWebhooksService(s RocketchatWebhooksService) func(c *Command) {
 	return func(c *Command) {
 		c.rocketchatWebhooksService = s
+	}
+}
+
+func WithMatrixRoomsService(s MatrixRoomsService) func(c *Command) {
+	return func(c *Command) {
+		c.matrixRoomsService = s
 	}
 }
 

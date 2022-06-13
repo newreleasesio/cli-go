@@ -8,7 +8,6 @@ package cmd_test
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"regexp"
 	"testing"
@@ -22,7 +21,7 @@ var homeDir string
 var errTest = errors.New("test error")
 
 func TestMain(m *testing.M) {
-	dir, err := ioutil.TempDir("", "newreleases-cmd-")
+	dir, err := os.MkdirTemp("", "newreleases-cmd-")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

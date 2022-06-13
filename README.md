@@ -264,6 +264,7 @@ newreleases hangouts-chat
 newreleases microsoft-teams
 newreleases mattermost
 newreleases rocketchat
+newreleases matrix
 newreleases webhook
 ```
 

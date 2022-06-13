@@ -30,6 +30,7 @@ var (
 		MSTeamsWebhookIDs:      []string{"gwgxtzed4yksdfeymsbe6t0td5"},
 		MattermostWebhookIDs:   []string{"wgxtzed4yksd5dfeymsbe6t0tg"},
 		RocketchatWebhookIDs:   []string{"5dfeymsbe6t0tgwgxtzed4yksd"},
+		MatrixRoomIDs:          []string{"4yksd5e6twgxtzdfeymsbed0tg"},
 		WebhookIDs:             []string{"e6t0td5ykgwgxtzed4eymsbsdf"},
 		Exclusions: []newreleases.Exclusion{
 			{Value: `^0\.1`},
@@ -155,6 +156,9 @@ func (s mockProjectsService) Add(ctx context.Context, provider, name string, o *
 	if o.RocketchatWebhookIDs != nil {
 		project.RocketchatWebhookIDs = o.RocketchatWebhookIDs
 	}
+	if o.MatrixRoomIDs != nil {
+		project.MatrixRoomIDs = o.MatrixRoomIDs
+	}
 	if o.WebhookIDs != nil {
 		project.WebhookIDs = o.WebhookIDs
 	}
@@ -205,6 +209,9 @@ func (s mockProjectsService) UpdateByID(ctx context.Context, id string, o *newre
 	if o.RocketchatWebhookIDs != nil {
 		project.RocketchatWebhookIDs = o.RocketchatWebhookIDs
 	}
+	if o.MatrixRoomIDs != nil {
+		project.MatrixRoomIDs = o.MatrixRoomIDs
+	}
 	if o.WebhookIDs != nil {
 		project.WebhookIDs = o.WebhookIDs
 	}
@@ -254,6 +261,9 @@ func (s mockProjectsService) UpdateByName(ctx context.Context, provider, name st
 	}
 	if o.RocketchatWebhookIDs != nil {
 		project.RocketchatWebhookIDs = o.RocketchatWebhookIDs
+	}
+	if o.MatrixRoomIDs != nil {
+		project.MatrixRoomIDs = o.MatrixRoomIDs
 	}
 	if o.WebhookIDs != nil {
 		project.WebhookIDs = o.WebhookIDs

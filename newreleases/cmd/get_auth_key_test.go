@@ -9,7 +9,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -143,11 +142,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			dir, err := ioutil.TempDir("", "newreleases-cmd-")
-			if err != nil {
-				t.Fatal(err)
-			}
-			defer os.RemoveAll(dir)
+			dir := t.TempDir()
 
 			cfgFile := filepath.Join(dir, ".newreleases.yaml")
 			if !tc.newConfig {
@@ -200,7 +195,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 			}
 
 			if tc.wantData != "" {
-				gotData, err := ioutil.ReadFile(cfgFile)
+				gotData, err := os.ReadFile(cfgFile)
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -208,7 +203,7 @@ func TestGetAuthKeyCmd(t *testing.T) {
 					t.Errorf("got config file data %q, want %q", string(gotData), tc.wantData)
 				}
 			} else {
-				gotData, _ := ioutil.ReadFile(cfgFile)
+				gotData, _ := os.ReadFile(cfgFile)
 				if string(gotData) != "" {
 					t.Errorf("got config file data %q, but it should not be", string(gotData))
 				}
