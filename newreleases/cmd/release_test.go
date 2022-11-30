@@ -162,6 +162,78 @@ func TestReleaseCmd_Get(t *testing.T) {
 	}
 }
 
+func TestReleaseCmd_GetLatest(t *testing.T) {
+	for _, tc := range []struct {
+		name            string
+		args            []string
+		releasesService cmd.ReleasesService
+		wantOutputFunc  func() string
+		wantError       error
+	}{
+		{
+			name:            "no releases",
+			args:            []string{"github", "golang/go"},
+			releasesService: newMockReleasesService(nil, nil, 1, nil),
+			wantOutputFunc:  func() string { return "Release not found.\n" },
+		},
+		{
+			name: "release",
+			args: []string{"github", "golang/go"},
+			releasesService: newMockReleasesService([]newreleases.Release{
+				{Version: "v0.1.0", Date: newTime(t, "2019-10-22T01:45:55Z")},
+			}, nil, 1, nil),
+			wantOutputFunc: func() string {
+				dateLen := len(newTime(t, "2019-10-22T01:45:55Z").Local().String())
+				return fmt.Sprintf("Version:   v0.1.0%s   \nDate:      %s   \n",
+					strings.Repeat(" ", dateLen-6),
+					newTime(t, "2019-10-22T01:45:55Z").Local(),
+				)
+			},
+		},
+		{
+			name: "release with optional flags",
+			args: []string{"github", "golang/go"},
+			releasesService: newMockReleasesService([]newreleases.Release{
+				{Version: "v0.1.0", Date: newTime(t, "2019-10-22T01:45:55Z"), IsPrerelease: true, HasNote: true, IsUpdated: true, IsExcluded: true},
+			}, nil, 1, nil),
+			wantOutputFunc: func() string {
+				dateLen := len(newTime(t, "2019-10-22T01:45:55Z").Local().String())
+				return fmt.Sprintf("Version:       v0.1.0%s   \nDate:          %s   \nPre-Release:   yes%s   \nHas Note:      yes%s   \nUpdated:       yes%s   \nExcluded:      yes%s   \n",
+					strings.Repeat(" ", dateLen-6),
+					newTime(t, "2019-10-22T01:45:55Z").Local(),
+					strings.Repeat(" ", dateLen-3),
+					strings.Repeat(" ", dateLen-3),
+					strings.Repeat(" ", dateLen-3),
+					strings.Repeat(" ", dateLen-3),
+				)
+			},
+		},
+		{
+			name:            "error",
+			args:            []string{"github", "golang/go"},
+			releasesService: newMockReleasesService(nil, nil, 1, errTest),
+			wantOutputFunc:  func() string { return "" },
+			wantError:       errTest,
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var outputBuf bytes.Buffer
+			if err := newCommand(t,
+				cmd.WithArgs(append([]string{"release", "get-latest"}, tc.args...)...),
+				cmd.WithOutput(&outputBuf),
+				cmd.WithReleasesService(tc.releasesService),
+			).Execute(); err != tc.wantError {
+				t.Fatalf("got error %v, want %v", err, tc.wantError)
+			}
+
+			gotOutput := outputBuf.String()
+			if wantOutput := tc.wantOutputFunc(); gotOutput != wantOutput {
+				t.Errorf("got output %q, want %q", gotOutput, wantOutput)
+			}
+		})
+	}
+}
+
 func TestReleaseCmd_Note(t *testing.T) {
 	for _, tc := range []struct {
 		name            string
@@ -238,6 +310,20 @@ func (s mockReleasesService) GetByProjectID(ctx context.Context, projectID, vers
 }
 
 func (s mockReleasesService) GetByProjectName(ctx context.Context, provider, projectName, version string) (release *newreleases.Release, err error) {
+	if len(s.releases) == 0 {
+		return nil, s.err
+	}
+	return &s.releases[0], s.err
+}
+
+func (s mockReleasesService) GetLatestByProjectID(ctx context.Context, projectID string) (release *newreleases.Release, err error) {
+	if len(s.releases) == 0 {
+		return nil, s.err
+	}
+	return &s.releases[0], s.err
+}
+
+func (s mockReleasesService) GetLatestByProjectName(ctx context.Context, provider, projectName string) (release *newreleases.Release, err error) {
 	if len(s.releases) == 0 {
 		return nil, s.err
 	}

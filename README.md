@@ -222,7 +222,17 @@ newreleases release get github golang/go go1.13.5
 newreleases release get mdsbe60td5gwgzetyksdfeyxt4 go1.13.5
 ```
 
-The last argument is the version which is requested.
+### Get the latest non-excluded project release information
+
+To get information about only one release, there is the `get-latest` sub-command:
+
+```sh
+newreleases release get github golang/go
+```
+
+```sh
+newreleases release get mdsbe60td5gwgzetyksdfeyxt4
+```
 
 ### Get a release note
 

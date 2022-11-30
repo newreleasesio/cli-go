@@ -26,6 +26,9 @@ func (c *command) initReleaseCmd() (err error) {
 	if err := c.initReleaseGetCmd(cmd); err != nil {
 		return err
 	}
+	if err := c.initReleaseGetLatestCmd(cmd); err != nil {
+		return err
+	}
 	if err := c.initReleaseNoteCmd(cmd); err != nil {
 		return err
 	}
@@ -135,6 +138,47 @@ func (c *command) initReleaseGetCmd(releaseCmd *cobra.Command) (err error) {
 	return addClientFlags(cmd)
 }
 
+func (c *command) initReleaseGetLatestCmd(releaseCmd *cobra.Command) (err error) {
+	cmd := &cobra.Command{
+		Use:   "get-latest [provider project_name] | [project_id]",
+		Short: "Get the latest non-excluded project release",
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			ctx, cancel := newClientContext(c.config)
+			defer cancel()
+
+			var release *newreleases.Release
+			switch len(args) {
+			case 1:
+				release, err = c.releasesService.GetLatestByProjectID(ctx, args[0])
+			case 2:
+				release, err = c.releasesService.GetLatestByProjectName(ctx, args[0], args[1])
+			default:
+				return cmd.Help()
+			}
+			if err != nil {
+				return err
+			}
+
+			if release == nil {
+				cmd.Println("Release not found.")
+				return nil
+			}
+
+			printRelease(cmd, release)
+			return nil
+		},
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := addClientConfigOptions(cmd, c.config); err != nil {
+				return err
+			}
+			return c.setReleasesService(cmd, args)
+		},
+	}
+
+	releaseCmd.AddCommand(cmd)
+	return addClientFlags(cmd)
+}
+
 func (c *command) initReleaseNoteCmd(releaseCmd *cobra.Command) (err error) {
 	cmd := &cobra.Command{
 		Use:   "note [PROVIDER PROJECT_NAME] | [PROJECT_ID] version",
@@ -193,6 +237,8 @@ type releasesService interface {
 	ListByProjectName(ctx context.Context, provider, projectName string, page int) (releases []newreleases.Release, lastPage int, err error)
 	GetByProjectID(ctx context.Context, projectID, version string) (release *newreleases.Release, err error)
 	GetByProjectName(ctx context.Context, provider, projectName, version string) (release *newreleases.Release, err error)
+	GetLatestByProjectID(ctx context.Context, projectID string) (release *newreleases.Release, err error)
+	GetLatestByProjectName(ctx context.Context, provider, projectName string) (release *newreleases.Release, err error)
 	GetNoteByProjectID(ctx context.Context, projectID string, version string) (release *newreleases.ReleaseNote, err error)
 	GetNoteByProjectName(ctx context.Context, provider, projectName string, version string) (release *newreleases.ReleaseNote, err error)
 }

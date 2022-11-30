@@ -815,8 +815,8 @@ honnef.co/go/tools v0.0.1-2020.1.3/go.mod h1:X/FiERA/W4tHapMX5mGpAtMSVEeEUOyHaw9
 honnef.co/go/tools v0.0.1-2020.1.4/go.mod h1:X/FiERA/W4tHapMX5mGpAtMSVEeEUOyHaw9vFzvIQ3k=
 jaytaylor.com/html2text v0.0.0-20211105163654-bc68cce691ba h1:3xhBI8FZepFq4YtdqlW6Z8YzdKM3nAV9xpOvgzWX+us=
 jaytaylor.com/html2text v0.0.0-20211105163654-bc68cce691ba/go.mod h1:OxvTsCwKosqQ1q7B+8FwXqg4rKZ/UG9dUW+g/VL2xH4=
-newreleases.io/newreleases v1.9.0 h1:5Nuk4UBQ5WZdiuwtNCUNzCeRa/1gyK4Dp+YneRdYcYI=
-newreleases.io/newreleases v1.9.0/go.mod h1:IFoaLRTd4ZNVIEIZflkjRt+0Z4BOgivteiLGs9vPobw=
+newreleases.io/newreleases v1.10.0 h1:ZkWO3z3NL/MyvidYGZ7WbDERoaRZLAfqbIETLq4AQR8=
+newreleases.io/newreleases v1.10.0/go.mod h1:IFoaLRTd4ZNVIEIZflkjRt+0Z4BOgivteiLGs9vPobw=
 rsc.io/binaryregexp v0.2.0/go.mod h1:qTv7/COck+e2FymRvadv62gMdZztPaShugOCi3I+8D8=
 rsc.io/quote/v3 v3.1.0/go.mod h1:yEA65RcK8LyAZtP9Kv3t0HmxON59tX3rD+tICJqUlj0=
 rsc.io/sampler v1.3.0/go.mod h1:T1hPZKmBbMNahiBKFy5HrXp6adAjACjK9JXDnKaTXpA=

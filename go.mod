@@ -8,7 +8,7 @@ require (
 	github.com/spf13/viper v1.10.1
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
 	jaytaylor.com/html2text v0.0.0-20211105163654-bc68cce691ba
-	newreleases.io/newreleases v1.9.0
+	newreleases.io/newreleases v1.10.0
 )
 
 require (
