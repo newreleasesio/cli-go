@@ -10,7 +10,7 @@ builds:
       - -trimpath
 
     ldflags:
-      - -s -w
+      - -s -w -X newreleases.io/cmd.version={{.Version}}
 
     env:
       - CGO_ENABLED=0

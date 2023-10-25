@@ -22,7 +22,7 @@ func TestVersionCmd(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	want := nrcmd.Version + "\n"
+	want := nrcmd.Version() + "\n"
 	got := outputBuf.String()
 	if got != want {
 		t.Errorf("got output %q, want %q", got, want)

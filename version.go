@@ -5,5 +5,43 @@
 
 package cmd
 
-// Version is a manually set semantic version number.
-var Version = "v0.1.12-dev"
+import "runtime/debug"
+
+// automatically set on release
+// and updated with vcs revision on init
+var version = "0.0.0"
+
+func init() {
+	info, ok := debug.ReadBuildInfo()
+	if !ok {
+		return
+	}
+
+	var revision string
+	var dirtyBuild bool
+	for _, s := range info.Settings {
+		switch s.Key {
+		case "vcs.revision":
+			revision = s.Value
+		case "vcs.modified":
+			dirtyBuild = s.Value == "true"
+		}
+	}
+
+	if len(revision) == 0 {
+		return
+	}
+
+	if len(revision) > 7 {
+		revision = revision[:7]
+	}
+
+	version += "-" + revision
+	if dirtyBuild {
+		version += "-dirty"
+	}
+}
+
+func Version() string {
+	return version
+}
