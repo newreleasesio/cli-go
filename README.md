@@ -42,7 +42,7 @@ go get -u newreleases.io/cmd/newreleases
 
 ## Homebrew
 
-A convenience installation for macOS users.
+A convenience installation for macOS and Linux users.
 
 ```sh
 brew install newreleasesio/cmd/newreleases
