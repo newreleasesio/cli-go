@@ -56,3 +56,47 @@ nfpms:
       - rpm
 
     bindir: /usr/bin
+
+brews:
+  -
+    name: newreleases
+
+    commit_author:
+      name: NewReleases Team
+      email: support@newreleases.io
+
+    caveats: |
+      # Configuration
+
+      This tool needs to authenticate to NewReleases API using a secret Auth Key
+      that can be generated on the service settings web page
+      https://newreleases.io/settings/api-keys.
+
+      The key can be stored permanently by issuing interactive commands:
+
+      newreleases configure
+
+      or
+
+      newreleases get-auth-key
+
+      or it can be provided as the command line argument flag `--auth-key` on
+      every newreleases command execution.
+
+      # Usage
+
+      Refer to the complete list of all commands on the project's README on
+      https://github.com/newreleasesio/cli-go.
+
+    homepage: "https://github.com/newreleasesio/cli-go"
+    description: "A command line client for managing NewReleases projects."
+
+    license: "BSD-3-Clause"
+
+    test: |
+      system "#{bin}/newreleases version"
+
+    repository:
+      owner: newreleasesio
+      name: homebrew-cmd
+      token: "{{ .Env.HOMEBREW_CMD_TAP_TOKEN }}"

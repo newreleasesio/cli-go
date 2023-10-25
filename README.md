@@ -40,6 +40,14 @@ This tool is implemented using the Go programming language and can be also insta
 go get -u newreleases.io/cmd/newreleases
 ```
 
+## Homebrew
+
+A convenience installation for macOS users.
+
+```sh
+brew install newreleasesio/cmd/newreleases
+```
+
 # Configuration
 
 This tool needs to authenticate to NewReleases API using a secret Auth Key

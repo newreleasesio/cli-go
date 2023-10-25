@@ -28,3 +28,4 @@ jobs:
           key: ${{ secrets.YOUR_PRIVATE_KEY }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HOMEBREW_CMD_TAP_TOKEN: ${{ secrets.HOMEBREW_CMD_TAP_TOKEN }}
